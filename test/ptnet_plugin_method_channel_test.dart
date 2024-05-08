@@ -1,5 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:ptnet_plugin/data.dart';
 import 'package:ptnet_plugin/ptnet_plugin_method_channel.dart';
 
 void main() {
@@ -12,7 +13,7 @@ void main() {
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
       channel,
       (MethodCall methodCall) async {
-        return '42';
+        return PingDTO(address: "zing.vn", ip: "127.0.0.1", time: 10.12);
       },
     );
   });
@@ -21,7 +22,7 @@ void main() {
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(channel, null);
   });
 
-  test('getPlatformVersion', () async {
-    expect(await platform.getPlatformVersion(), '42');
+  test('getPingResult', () async {
+    expect(await platform.getPingResult("zing.vn"), PingDTO(address: "zing.vn", ip: "127.0.0.1", time: 10.12));
   });
 }

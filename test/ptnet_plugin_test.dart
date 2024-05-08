@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:ptnet_plugin/data.dart';
 import 'package:ptnet_plugin/ptnet_plugin.dart';
 import 'package:ptnet_plugin/ptnet_plugin_platform_interface.dart';
 import 'package:ptnet_plugin/ptnet_plugin_method_channel.dart';
@@ -9,7 +10,10 @@ class MockPtnetPluginPlatform
     implements PtnetPluginPlatform {
 
   @override
-  Future<String?> getPlatformVersion() => Future.value('42');
+  Future<PageLoadDTO?> getPageLoadResult(String address) => Future.value(PageLoadDTO(address: "zing.vn",time:10.0));
+
+  @override
+  Future<PingDTO?> getPingResult(String address)  => Future.value(PingDTO(address: "zing.vn",ip:"127.0.0.1",time:10.12));
 }
 
 void main() {
@@ -24,6 +28,7 @@ void main() {
     MockPtnetPluginPlatform fakePlatform = MockPtnetPluginPlatform();
     PtnetPluginPlatform.instance = fakePlatform;
 
-    expect(await ptnetPlugin.getPlatformVersion(), '42');
+    expect(await ptnetPlugin.getPingResult("zing.vn"),
+        PingDTO(address: "zing.vn", ip: "127.0.0.1", time: 10.12));
   });
 }
