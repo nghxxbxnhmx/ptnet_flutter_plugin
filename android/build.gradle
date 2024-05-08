@@ -85,8 +85,8 @@ android {
 
     // Ignore bundleDebugAar
     gradle.taskGraph.whenReady { taskGraph ->
-        if (taskGraph.hasTask(":librariesplugin:bundleDebugAar")) {
-            tasks.getByPath(":librariesplugin:bundleDebugAar").enabled = false
+        if (taskGraph.hasTask(":ptnet_plugin:bundleDebugAar")) {
+            tasks.getByPath(":ptnet_plugin:bundleDebugAar").enabled = false
         }
     }
 }
