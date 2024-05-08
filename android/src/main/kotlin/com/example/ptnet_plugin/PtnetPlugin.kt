@@ -21,15 +21,32 @@ class PtnetPlugin: FlutterPlugin, MethodCallHandler {
     channel.setMethodCallHandler(this)
   }
 
-  override fun onMethodCall(call: MethodCall, result: Result) {
-    if (call.method == "getPlatformVersion") {
-      result.success("Android ${android.os.Build.VERSION.RELEASE}")
-    } else {
-      result.notImplemented()
-    }
-  }
-
   override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
     channel.setMethodCallHandler(null)
+  }
+  override fun onMethodCall(call: MethodCall, result: Result) {
+    // Get data from dart
+    val map: Map<String, Any?> = call.arguments as Map<String, Any?>
+
+    val tmpAdd = (if (map.containsKey("address")) map["address"] else "8.8.8.8") as String
+    val port = (if (map.containsKey("port")) map["port"] else -1) as Int
+    // Note: Lỗi ở Ping, reset máy thử ( recommend: ko dùng AVD-Android Virtual Device (AndroidStudio-setting cực)
+    when (call.method) {
+      "getPingResult" -> result.success(
+        LibrariesHandler(
+          "ping",
+          address = tmpAdd
+        ).getResult()
+      )
+
+      "getPageLoadResult" -> result.success(
+        LibrariesHandler(
+          "pageLoad",
+          address = tmpAdd
+        ).getResult()
+      )
+
+      else -> result.notImplemented()
+    }
   }
 }
