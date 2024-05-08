@@ -36,4 +36,8 @@ class LibrariesHandler(
             }
         }
     }
+	
+	fun getResult(): String{
+		return this.result
+	}
 }
