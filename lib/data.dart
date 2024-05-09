@@ -39,3 +39,27 @@ class PageLoadDTO {
     return 'PageLoadDTO{address: $address, time: $time}';
   }
 }
+
+class AnswerDTO {
+  final String name;
+  final String data;
+  final int type;
+  final int ttl;
+
+  AnswerDTO(
+      {required this.name, required this.data, required this.type, required this.ttl});
+
+  factory AnswerDTO.fromJson(Map<String, dynamic> json) {
+    return AnswerDTO(
+        name: json['name'],
+        data: json['data'],
+        type: int.parse(json['type'].toString()),
+        ttl: int.parse(json['ttl'].toString())
+    );
+  }
+
+  @override
+  String toString() {
+    return 'AnswerDTO{name: $name, data: $data, type: $type, ttl: $ttl}';
+  }
+}

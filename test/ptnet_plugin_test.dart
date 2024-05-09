@@ -14,6 +14,12 @@ class MockPtnetPluginPlatform
 
   @override
   Future<PingDTO?> getPingResult(String address)  => Future.value(PingDTO(address: "zing.vn",ip:"127.0.0.1",time:10.12));
+
+  @override
+  Future<List<AnswerDTO>?> getDnsLookupResult(String address, String server) {
+    // TODO: implement getDnsLookupResult
+    throw UnimplementedError();
+  }
 }
 
 void main() {

@@ -31,4 +31,19 @@ class PtnetPlugin {
       return null;
     });
   }
+
+  Future<List<AnswerDTO>?> getDnsLookupResult(String address, String server) {
+    return PtnetPluginPlatform.instance
+        .getDnsLookupResult(address, server)
+        .then((List<AnswerDTO>? results) {
+      // Check if result is not null
+      if (results != null) {
+        return results;
+      } else {
+        return null;
+      }
+    }).catchError((error) {
+      return null;
+    });
+  }
 }

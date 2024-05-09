@@ -30,4 +30,8 @@ abstract class PtnetPluginPlatform extends PlatformInterface {
   Future<PageLoadDTO?> getPageLoadResult(String address) {
     throw UnimplementedError('pageLoadResult() has not been implemented.');
   }
+
+  Future<List<AnswerDTO>?> getDnsLookupResult(String address, String server) {
+    throw UnimplementedError('dnsLookupResult() has not been implemented.');
+  }
 }

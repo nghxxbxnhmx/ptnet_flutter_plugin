@@ -46,4 +46,26 @@ class MethodChannelPtnetPlugin extends PtnetPluginPlatform {
       return null;
     }
   }
+
+  @override
+  Future<List<AnswerDTO>?> getDnsLookupResult(
+      String address, String server) async {
+    try {
+      var dataToPass = <String, dynamic>{'address': address, 'server': server};
+      final jsonResult = await methodChannel.invokeMethod<String>(
+          'getDnsLookupResult', dataToPass);
+
+      if (jsonResult != null) {
+        final List<dynamic> list = json.decode(jsonResult);
+        // Map each item in the list to a PingDTO object using the fromJson constructor
+        final List<AnswerDTO> answerDTOs =
+            list.map((item) => AnswerDTO.fromJson(item)).toList();
+        return answerDTOs;
+      } else {
+        return null;
+      }
+    } catch (e) {
+      return null;
+    }
+  }
 }

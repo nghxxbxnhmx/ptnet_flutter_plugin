@@ -17,6 +17,7 @@ class LibrariesHandler(
         when (act) {
             "ping" -> result = pingResult(address)
             "pageLoad" -> result = pageLoadResult(address).get()
+            "dnsLookup" -> result = dnsLookUpResult(address,server).get()
         }
     }
 
@@ -31,6 +32,21 @@ class LibrariesHandler(
             try {
                 val time = pageLoadService.pageLoadTimer(address)
                 Gson().toJson(mapOf("address" to address, "time" to time))
+            } catch (e: Exception) {
+                throw RuntimeException("Failed to load page: ${e.message}")
+            }
+        }
+    }
+
+    private fun dnsLookUpResult(address: String,server: String): CompletableFuture<String> {
+        return CompletableFuture.supplyAsync {
+            val dnsLookupService = NsLookupService()
+            try {
+//                Log.d("Plugins - LookupService", "${dnsLookupService.toString()}")
+                var dnsResult = ArrayList<AnswerDTO>()
+                // Cannot find source class for androidx.compose.runtime.SnapshotMutableStateImpl - dnsResponseDTO
+                dnsResult = dnsLookupService.execute(address, server)
+                Gson().toJson(dnsResult)
             } catch (e: Exception) {
                 throw RuntimeException("Failed to load page: ${e.message}")
             }
