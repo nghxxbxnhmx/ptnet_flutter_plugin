@@ -46,4 +46,19 @@ class PtnetPlugin {
       return null;
     });
   }
+
+  Future<PortDTO?> getPortScanResult(String address, int port, int timeout) {
+    return PtnetPluginPlatform.instance
+        .getPortScanResult(address, port, timeout)
+        .then((PortDTO? results) {
+      // Check if result is not null
+      if (results != null) {
+        return results;
+      } else {
+        return null;
+      }
+    }).catchError((error) {
+      return null;
+    });
+  }
 }

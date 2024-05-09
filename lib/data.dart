@@ -63,3 +63,25 @@ class AnswerDTO {
     return 'AnswerDTO{name: $name, data: $data, type: $type, ttl: $ttl}';
   }
 }
+
+class PortDTO {
+  final String address;
+  final int port;
+  final bool open;
+
+  PortDTO(
+      {required this.address, required this.port, required this.open});
+
+  factory PortDTO.fromJson(Map<String, dynamic> json) {
+    return PortDTO(
+        address: json['address'],
+        port: json['port'],
+        open: bool.parse(json['open'].toString())
+    );
+  }
+
+  @override
+  String toString() {
+    return 'PortDTO{address: $address, port: $port, open: $open}';
+  }
+}

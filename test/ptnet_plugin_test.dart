@@ -20,6 +20,12 @@ class MockPtnetPluginPlatform
     // TODO: implement getDnsLookupResult
     throw UnimplementedError();
   }
+
+  @override
+  Future<PortDTO?> getPortScanResult(String address, int port, int timeout) {
+    // TODO: implement getPortScanResult
+    throw UnimplementedError();
+  }
 }
 
 void main() {

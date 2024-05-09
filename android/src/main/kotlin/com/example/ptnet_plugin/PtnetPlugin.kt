@@ -32,6 +32,7 @@ class PtnetPlugin : FlutterPlugin, MethodCallHandler {
         val address = map.getOrDefault("address", "") as String
         val server = map.getOrDefault("server", "") as String
         val port = map.getOrDefault("port", -1) as Int
+        val timeout = map.getOrDefault("timeout", -1) as Int
         // Note: Lỗi ở Ping, reset máy thử ( recommend: ko dùng AVD-Android Virtual Device (AndroidStudio-setting cực)
         when (call.method) {
             "getPingResult" -> result.success(
@@ -53,6 +54,15 @@ class PtnetPlugin : FlutterPlugin, MethodCallHandler {
                     "dnsLookup",
                     address = address,
                     server = server
+                ).getResult()
+            )
+
+            "getPortScanResult" -> result.success(
+                LibrariesHandler(
+                    "portScan",
+                    address = address,
+                    port = port,
+                    timeOut = timeout
                 ).getResult()
             )
 
