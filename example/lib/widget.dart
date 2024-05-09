@@ -2,30 +2,30 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class CustomDropdownButton extends StatelessWidget {
-  final bool executeEnable;
+  final bool enabled;
   final String actionValue;
   final List<String> actionValues;
   final void Function(String?) onChanged;
 
   const CustomDropdownButton({
-    Key? key,
-    required this.executeEnable,
+    super.key,
+    required this.enabled,
     required this.actionValue,
     required this.actionValues,
     required this.onChanged,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     return Builder(builder: (BuildContext context) {
       return IgnorePointer(
-        ignoring: !executeEnable,
+        ignoring: !enabled,
         child: Container(
           decoration: BoxDecoration(
-            color: executeEnable ? Colors.white : Colors.grey[200],
+            color: enabled ? Colors.white : Colors.grey[200],
             borderRadius: BorderRadius.circular(8.0),
             border: Border.all(
-              color: executeEnable ? Colors.blue : Colors.grey[400]!,
+              color: enabled ? Colors.blue : Colors.grey[400]!,
               width: 2.0,
             ),
           ),
@@ -34,21 +34,21 @@ class CustomDropdownButton extends StatelessWidget {
             padding: const EdgeInsets.only(
                 left: 16.0, top: 4.0, bottom: 4.0, right: 8.0),
             icon: Icon(Icons.keyboard_arrow_down,
-                color: executeEnable ? Colors.blue : Colors.grey[400]),
+                color: enabled ? Colors.blue : Colors.grey[400]),
             items: actionValues.map((String items) {
               return DropdownMenuItem<String>(
                 value: items,
                 child: Text(
                   items,
                   style: TextStyle(
-                    color: executeEnable ? Colors.black : Colors.grey[600],
+                    color: enabled ? Colors.black : Colors.grey[600],
                   ),
                 ),
               );
             }).toList(),
             onChanged: onChanged,
             style: TextStyle(
-              color: executeEnable ? Colors.black : Colors.grey[600],
+              color: enabled ? Colors.black : Colors.grey[600],
               fontSize: 16.0,
             ),
             underline: Container(),
@@ -60,23 +60,35 @@ class CustomDropdownButton extends StatelessWidget {
 }
 
 class IpForm extends StatelessWidget {
+  final bool enabled;
   final TextEditingController controller;
 
-  const IpForm({
-    Key? key,
-    required this.controller,
-  }) : super(key: key);
+  const IpForm({super.key, required this.controller, required this.enabled});
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      child: TextFormField(
-        decoration: const InputDecoration(
-          border: UnderlineInputBorder(),
-          labelText: 'Enter IP/Domain',
+    return IgnorePointer(
+      ignoring: !enabled,
+      child: Container(
+        margin: const EdgeInsets.only(top: 16, bottom: 8, left: 8, right: 8),
+        decoration: BoxDecoration(
+          color: enabled ? Colors.white : Colors.grey[200],
+          borderRadius: BorderRadius.circular(8.0),
+          border: Border.all(
+            color: enabled ? Colors.grey : Colors.grey[400]!,
+            width: 1.0,
+          ),
         ),
-        controller: controller,
+        child: Padding(
+          padding: const EdgeInsets.only(left: 8, right: 8, top: 4, bottom: 8),
+          child: TextFormField(
+            decoration: const InputDecoration(
+              border: UnderlineInputBorder(),
+              labelText: 'Enter IP/Domain',
+            ),
+            controller: controller,
+          ),
+        ),
       ),
     );
   }
@@ -85,116 +97,127 @@ class IpForm extends StatelessWidget {
 class TTLForm extends StatelessWidget {
   final bool visible;
   final bool enabled;
-  final TextEditingController controller;
+  final bool label;
+  final ValueNotifier<int?> selectedValue;
 
   const TTLForm({
-    Key? key,
+    super.key, // Adding Key? key parameter
     required this.visible,
     required this.enabled,
-    required this.controller,
-  }) : super(key: key);
+    required this.label,
+    required this.selectedValue,
+  }); // Passing key to super constructor
 
   @override
   Widget build(BuildContext context) {
-    return Visibility(
-      visible: visible,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-        child: TextFormField(
-          decoration: const InputDecoration(
-            border: UnderlineInputBorder(),
-            labelText: 'Time-to-live (ttl)',
-          ),
-          keyboardType: TextInputType.number,
-          inputFormatters: <TextInputFormatter>[
-            FilteringTextInputFormatter.digitsOnly
-          ],
-          enabled: enabled,
-          controller: controller,
-        ),
+    // Generating a list of dropdown menu items from 0 to 100
+    final List<DropdownMenuItem<int>> dropdownItems = List.generate(
+      500,
+      (int index) => DropdownMenuItem<int>(
+        value: index + 1,
+        child: Text('${index + 1}'),
       ),
     );
+
+    return Builder(builder: (BuildContext context) {
+      return IgnorePointer(
+        ignoring: !enabled,
+        child: Visibility(
+          visible: visible,
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+            decoration: BoxDecoration(
+              color: enabled ? Colors.white : Colors.grey[200],
+              borderRadius: BorderRadius.circular(8.0),
+              border: Border.all(
+                color: enabled ? Colors.grey : Colors.grey[400]!,
+                width: 1.0,
+              ),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              child: DropdownButtonFormField<int>(
+                decoration: InputDecoration(
+                  // Removed 'const' from InputDecoration
+                  border: InputBorder.none,
+                  labelText: label ? "Time-to-live" : "Timeout",
+                ),
+                value: selectedValue.value,
+                items: dropdownItems,
+                onChanged: enabled
+                    ? (int? newValue) {
+                        selectedValue.value = newValue;
+                      }
+                    : null,
+              ),
+            ),
+          ),
+        ),
+      );
+    });
   }
 }
 
 class PortRangeForm extends StatelessWidget {
   final bool visible;
   final bool enabled;
-  final bool editEnable;
-  final TextEditingController inputPortStart;
-  final TextEditingController inputPortEnd;
+  final ValueNotifier<int?> selectedPortType;
 
   const PortRangeForm({
-    Key? key,
+    super.key,
     required this.visible,
     required this.enabled,
-    required this.editEnable,
-    required this.inputPortStart,
-    required this.inputPortEnd,
-  }) : super(key: key);
+    required this.selectedPortType,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Visibility(
-      visible: visible,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-        child: IgnorePointer(
-          ignoring: !editEnable,
-          child: Row(
-            children: [
-              Expanded(
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  decoration: BoxDecoration(
-                    color: editEnable ? Colors.white : Colors.grey[200],
-                    border: Border.all(
-                      color: Colors.grey[400]!,
-                      width: 1.0,
-                    ),
-                    borderRadius: BorderRadius.circular(4.0),
-                  ),
-                  child: TextFormField(
-                    decoration: const InputDecoration(
-                      border: InputBorder.none,
-                      labelText: 'Start',
-                    ),
-                    keyboardType: TextInputType.number,
-                    inputFormatters: <TextInputFormatter>[
-                      FilteringTextInputFormatter.digitsOnly
-                    ],
-                    enabled: enabled,
-                    controller: inputPortStart,
-                  ),
-                ),
+    final List<String> portRangeOptionsDisplay = [
+      'Well-Known Port: 0 - 1023',
+      'Registered Port: 1024 - 49151',
+      'Dynamic Port: 49152 - 65565',
+    ];
+
+    final List<int> portRangeOptions = [
+      0,
+      1,
+      2
+    ]; // Corresponding integer values
+
+    return IgnorePointer(
+      ignoring: !enabled,
+      child: Visibility(
+        visible: visible,
+        child: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+          decoration: BoxDecoration(
+            color: enabled ? Colors.white : Colors.grey[200],
+            borderRadius: BorderRadius.circular(8.0),
+            border: Border.all(
+              color: enabled ? Colors.grey : Colors.grey[400]!,
+              width: 1.0,
+            ),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            child: DropdownButtonFormField<int>(
+              decoration: const InputDecoration(
+                border: InputBorder.none,
+                labelText: 'Port Range',
               ),
-              const SizedBox(width: 8.0),
-              Expanded(
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  decoration: BoxDecoration(
-                    color: editEnable ? Colors.white : Colors.grey[200],
-                    border: Border.all(
-                      color: Colors.grey[400]!,
-                      width: 1.0,
-                    ),
-                    borderRadius: BorderRadius.circular(4.0),
-                  ),
-                  child: TextFormField(
-                    decoration: const InputDecoration(
-                      border: InputBorder.none,
-                      labelText: 'End',
-                    ),
-                    keyboardType: TextInputType.number,
-                    inputFormatters: <TextInputFormatter>[
-                      FilteringTextInputFormatter.digitsOnly
-                    ],
-                    enabled: enabled,
-                    controller: inputPortEnd,
-                  ),
-                ),
-              ),
-            ],
+              value: selectedPortType.value,
+              items: portRangeOptions.map((int value) {
+                return DropdownMenuItem<int>(
+                  value: value,
+                  child: Text(portRangeOptionsDisplay[value]),
+                );
+              }).toList(),
+              onChanged: enabled
+                  ? (int? newValue) {
+                      selectedPortType.value = newValue;
+                    }
+                  : null,
+            ),
           ),
         ),
       ),
@@ -208,11 +231,11 @@ class DNSServerForm extends StatelessWidget {
   final TextEditingController inputServer;
 
   const DNSServerForm({
-    Key? key,
+    super.key,
     required this.visible,
     required this.enabled,
     required this.inputServer,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -234,18 +257,18 @@ class DNSServerForm extends StatelessWidget {
 }
 
 class ExecuteButton extends StatelessWidget {
-  final bool executeEnable;
+  final bool enabled;
   final String actionValue;
   final void Function(String) onPressed;
   final void Function(String?) stopPressed;
 
   const ExecuteButton({
-    Key? key,
-    required this.executeEnable,
+    super.key,
+    required this.enabled,
     required this.actionValue,
     required this.onPressed,
     required this.stopPressed,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -254,26 +277,24 @@ class ExecuteButton extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
           child: Row(children: [
             Visibility(
-              visible: executeEnable,
+              visible: enabled,
               child: Expanded(
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        executeEnable ? Colors.blue : Colors.grey[400],
+                    backgroundColor: enabled ? Colors.blue : Colors.grey[400],
                     textStyle: TextStyle(
-                      color: executeEnable ? Colors.black : Colors.white,
+                      color: enabled ? Colors.black : Colors.white,
                       fontSize: 13,
                       fontStyle: FontStyle.normal,
                     ),
                   ),
-                  onPressed:
-                      executeEnable ? () => onPressed(actionValue) : null,
+                  onPressed: enabled ? () => onPressed(actionValue) : null,
                   child: const Text('Execute'),
                 ),
               ),
             ),
             Visibility(
-                visible: !executeEnable,
+                visible: !enabled,
                 child: Expanded(
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
@@ -284,7 +305,7 @@ class ExecuteButton extends StatelessWidget {
                         fontStyle: FontStyle.normal,
                       ),
                     ),
-                    onPressed: !executeEnable ? () => stopPressed("") : null,
+                    onPressed: !enabled ? () => stopPressed("") : null,
                     child: const Text('Stop'),
                   ),
                 ))
@@ -301,48 +322,49 @@ class CustomResultWidget extends StatelessWidget {
   final String result;
 
   const CustomResultWidget({
-    Key? key,
+    super.key,
     required this.visibleProgress,
     required this.currentPort,
     required this.endPort,
     required this.actionValue,
     required this.result,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Visibility(
-          visible: visibleProgress,
-          child: Column(
-            children: <Widget>[
-              SizedBox(
-                width: 200,
-                child: LinearProgressIndicator(
-                  value: currentPort / endPort, // Calculate progress value
-                  backgroundColor: Colors.grey[300],
-                  valueColor: const AlwaysStoppedAnimation<Color>(Colors.blue),
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Visibility(
+            visible: visibleProgress,
+            child: Column(
+              children: <Widget>[
+                SizedBox(
+                  width: 200,
+                  child: LinearProgressIndicator(
+                    value: currentPort / endPort, // Calculate progress value
+                    backgroundColor: Colors.grey[300],
+                    valueColor:
+                        const AlwaysStoppedAnimation<Color>(Colors.blue),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 10.0),
-              Text(
-                'Progress: $currentPort / $endPort',
-                // Display current progress value
-                style: const TextStyle(fontSize: 20.0),
-              ),
-            ],
+                const SizedBox(height: 10.0),
+                Text(
+                  'Progress: $currentPort / $endPort',
+                  // Display current progress value
+                  style: const TextStyle(fontSize: 20.0),
+                ),
+              ],
+            ),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-          child: Text(
-            "$actionValue's Result\n$result",
-            textAlign: TextAlign.center,
-          ),
-        ),
-      ],
-    );
+          Padding(
+            padding:
+                const EdgeInsets.only(left: 8, right: 8, top: 4, bottom: 8),
+            child: Text(
+              "$actionValue's Result\n$result",
+              textAlign: TextAlign.center,
+            ),
+          )
+        ]);
   }
 }

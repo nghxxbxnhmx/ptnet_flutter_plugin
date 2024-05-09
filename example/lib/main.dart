@@ -21,32 +21,23 @@ class _MyAppState extends State<MyApp> {
   final _ptnetPlugin = PtnetPlugin();
 
   // Controller - UI
-  final inputTTL = TextEditingController();
   final inputServer = TextEditingController();
   final inputAddress = TextEditingController();
-  final inputPortEnd = TextEditingController();
-  final inputPortStart = TextEditingController();
-  var enableTTL = false;
   var visibleTTL = false;
-  var enableServer = false;
   var visibleServer = false;
-  var enablePort = false;
   var visiblePort = false;
   var visibleProgress = false;
-  var executeEnable = true;
-  var editEnable = true;
+  var executeEnable = false;
+  var editEnable = false;
+  var timeLabel = false;
 
   // Unchanged Values
   final int _initTTL = -1;
   final _initAddress = 'zing.vn';
-  final int _startPort = 1;
+
   final String _dnsServer = "8.8.8.8";
 
   // Changed Values
-  int _currentPort = 1;
-  int _endPort = 1023;
-
-  // DropdownList
   String actionValue = 'Ping';
   var actionValues = [
     'Ping',
@@ -55,6 +46,15 @@ class _MyAppState extends State<MyApp> {
     'PortScan',
     'TraceRoute'
   ];
+  final ValueNotifier<int?> selectedTTL = ValueNotifier<int?>(null);
+  final ValueNotifier<int?> selectedPortType = ValueNotifier<int?>(null);
+
+  @override
+  void dispose() {
+    selectedTTL.dispose(); // Don't forget to dispose of the ValueNotifier
+    selectedPortType.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -66,47 +66,28 @@ class _MyAppState extends State<MyApp> {
     inputAddress.text = _initAddress;
     _result = "";
     executeEnable = true;
+    selectedTTL.value = 1;
+    selectedPortType.value = 0;
     setState(() {
+      visibleTTL = false;
+      visiblePort = false;
+      visibleServer = false;
+      visibleProgress = false;
       switch (actionValue) {
-        case "TraceRoute":
-          enableTTL = true;
-          visibleTTL = true;
-          enableServer = false;
-          visibleServer = false;
-          enablePort = false;
-          visiblePort = false;
-          visibleProgress = false;
-          inputTTL.text = "$_initTTL";
-          break;
         case "DnsLookup":
-          enableTTL = false;
-          visibleTTL = false;
-          enableServer = true;
           visibleServer = true;
-          enablePort = false;
-          visiblePort = false;
-          visibleProgress = false;
-          inputServer.text = "$_dnsServer";
           break;
         case "PortScan":
-          enableTTL = false;
-          visibleTTL = false;
-          enableServer = false;
-          visibleServer = false;
-          enablePort = true;
+          visibleTTL = true;
           visiblePort = true;
-          visibleProgress = false;
-          inputPortStart.text = "$_startPort";
-          inputPortEnd.text = "$_endPort";
+          timeLabel = false;
+          break;
+        case "TraceRoute":
+          visibleTTL = true;
+          timeLabel = true;
           break;
         default:
-          enableTTL = false;
-          visibleTTL = false;
-          enableServer = false;
-          visibleServer = false;
-          enablePort = false;
-          visiblePort = false;
-          visibleProgress = false;
+          break;
       }
     });
   }
@@ -218,6 +199,76 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
+  int _currentPort = 0;
+  int _endPort = 0;
+  int _rootPort = 0;
+
+  void selectedPortRange() {
+    int portType = int.tryParse(selectedPortType.value.toString()) ?? 1;
+    switch (portType) {
+      case 0:
+        _currentPort = 1;
+        _endPort = 1023;
+        break;
+      case 1:
+        _currentPort = 1024;
+        _endPort = 49151;
+        break;
+      case 2:
+        _currentPort = 49152;
+        _endPort = 65565;
+        break;
+      default:
+        _currentPort = 1;
+        _endPort = 65565;
+        break;
+    }
+    _rootPort = _currentPort;
+  }
+
+  Future<void> portScanState() async {
+    String address =
+        (inputAddress.text.isNotEmpty) ? inputAddress.text : _initAddress;
+    int timeout = int.tryParse(selectedTTL.value.toString()) ?? 1;
+    selectedPortRange();
+
+    String error = "";
+    // Start process  -------------------------------------------
+    setState(() {
+      _result = "";
+      executeEnable = false;
+      visibleProgress = true;
+      inputAddress.text = address;
+    });
+    // Execute
+    for (var port = _rootPort; port <= _endPort; port++) {
+      if (!executeEnable) {
+        try {
+          PortDTO portDTO =
+              await _ptnetPlugin.getPortScanResult(address, port, timeout) ??
+                  PortDTO(address: "", port: -1, open: false);
+          setState(() {
+            if (portDTO.port != -1 && portDTO.open) {
+              _result += "$portDTO\n";
+            }
+            _currentPort = port;
+          });
+        } on Exception {
+          error = "Fail to get port scan result";
+        }
+      }
+    }
+
+    // End process   -------------------------------------------
+    if (!mounted) return;
+    setState(() {
+      executeEnable = true;
+      if (_currentPort == _endPort) {
+        visibleProgress = false;
+      }
+    });
+  }
+
   Future<void> traceRouteState() async {
     // Start process  -------------------------------------------
     setState(() {
@@ -246,6 +297,9 @@ class _MyAppState extends State<MyApp> {
         dnsLookupState();
       case "TraceRoute":
         traceRouteState();
+        break;
+      case "PortScan":
+        portScanState();
         break;
       default:
         break;
@@ -279,37 +333,37 @@ class _MyAppState extends State<MyApp> {
           child: Column(
             children: [
               CustomDropdownButton(
-                executeEnable: executeEnable,
+                enabled: executeEnable,
                 actionValue: actionValue,
                 actionValues: actionValues,
                 onChanged: onChanged,
               ),
-              IpForm(controller: inputAddress),
-              TTLForm(
-                  visible: visibleTTL,
-                  enabled: enableTTL,
-                  controller: inputTTL),
+              IpForm(controller: inputAddress, enabled: executeEnable),
               DNSServerForm(
                   visible: visibleServer,
-                  enabled: enableServer,
+                  enabled: executeEnable,
                   inputServer: inputServer),
               PortRangeForm(
                   visible: visiblePort,
-                  enabled: enablePort,
-                  editEnable: editEnable,
-                  inputPortStart: inputPortStart,
-                  inputPortEnd: inputPortEnd),
+                  enabled: executeEnable,
+                  selectedPortType: selectedPortType),
+              TTLForm(
+                visible: visibleTTL,
+                enabled: executeEnable,
+                label: timeLabel,
+                selectedValue: selectedTTL,
+              ),
               const SizedBox(height: 30),
               ExecuteButton(
-                  executeEnable: executeEnable,
+                  enabled: executeEnable,
                   actionValue: actionValue,
                   onPressed: callState,
                   stopPressed: stopExecute),
               const SizedBox(height: 12),
               CustomResultWidget(
                 visibleProgress: visibleProgress,
-                currentPort: _currentPort,
-                endPort: _endPort,
+                currentPort: _currentPort - _rootPort + 1,
+                endPort: _endPort - _rootPort + 1,
                 actionValue: actionValue,
                 result: _result,
               ),
