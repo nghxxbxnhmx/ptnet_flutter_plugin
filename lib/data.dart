@@ -21,67 +21,112 @@ class PingDTO {
   }
 }
 
-class PageLoadDTO {
-  final String address;
-  final double time;
-
-  PageLoadDTO({required this.address, required this.time});
-
-  factory PageLoadDTO.fromJson(Map<String, dynamic> json) {
-    return PageLoadDTO(
-      address: json['address'],
-      time: double.parse(json['time'].toString()),
-    );
-  }
-
-  @override
-  String toString() {
-    return 'PageLoadDTO{address: $address, time: $time}';
-  }
-}
-
-class AnswerDTO {
-  final String name;
-  final String data;
-  final int type;
-  final int ttl;
-
-  AnswerDTO(
-      {required this.name, required this.data, required this.type, required this.ttl});
-
-  factory AnswerDTO.fromJson(Map<String, dynamic> json) {
-    return AnswerDTO(
-        name: json['name'],
-        data: json['data'],
-        type: int.parse(json['type'].toString()),
-        ttl: int.parse(json['ttl'].toString())
-    );
-  }
-
-  @override
-  String toString() {
-    return 'AnswerDTO{name: $name, data: $data, type: $type, ttl: $ttl}';
-  }
-}
-
 class PortDTO {
   final String address;
   final int port;
   final bool open;
 
-  PortDTO(
-      {required this.address, required this.port, required this.open});
+  PortDTO({required this.address, required this.port, required this.open});
 
   factory PortDTO.fromJson(Map<String, dynamic> json) {
     return PortDTO(
         address: json['address'],
         port: json['port'],
-        open: bool.parse(json['open'].toString())
-    );
+        open: bool.parse(json['open'].toString()));
   }
 
   @override
   String toString() {
     return 'PortDTO{address: $address, port: $port, open: $open}';
+  }
+}
+
+class TraceHopDTO {
+  final int hopNumber;
+  final String domain;
+  final String ipAddress;
+  final double time;
+  final bool status;
+
+  TraceHopDTO(
+      {required this.hopNumber,
+      required this.domain,
+      required this.ipAddress,
+      required this.time,
+      required this.status});
+
+  factory TraceHopDTO.fromJson(Map<String, dynamic> json) {
+    return TraceHopDTO(
+        hopNumber: int.parse(json['hopNumber'].toString()),
+        domain: json['domain'],
+        ipAddress: json['ipAddress'],
+        time: double.parse(json['time'].toString()),
+        status: bool.parse(json['status'].toString()));
+  }
+
+  @override
+  String toString() {
+    return 'TraceHopDTO{hopNumber: $hopNumber, domain: $domain, ipAddress: $ipAddress, time: $time, status: $status}';
+  }
+}
+
+class WifiScanResultDTO {
+  final String ssid;
+  final String bssid;
+  final int channel;
+  final int signalLevel;
+  final int bandwidth;
+
+  WifiScanResultDTO(
+      {required this.ssid,
+      required this.bssid,
+      required this.channel,
+      required this.signalLevel,
+      required this.bandwidth});
+
+  factory WifiScanResultDTO.fromJson(Map<String, dynamic> json) {
+    return WifiScanResultDTO(
+        ssid: json['ssid'],
+        bssid: json['bssid'],
+        channel: int.parse(json['channel'].toString()),
+        signalLevel: int.parse(json['signalLevel'].toString()),
+        bandwidth: int.parse(json['bandwidth'].toString()));
+  }
+
+  @override
+  String toString() {
+    return 'WifiScanResultDTO{ssid: $ssid, bssid: $bssid, channel: $channel, signalLevel: $signalLevel, bandwidth: $bandwidth}';
+  }
+}
+
+class WifiInfoDTO {
+  final String SSID;
+  final String BSSID;
+  final String gateWay;
+  final String subnetMask;
+  final String deviceMAC;
+  final String ipAddress;
+
+  WifiInfoDTO(
+      {required this.SSID,
+      required this.BSSID,
+      required this.gateWay,
+      required this.subnetMask,
+      required this.deviceMAC,
+      required this.ipAddress});
+
+  factory WifiInfoDTO.fromJson(Map<String, dynamic> json) {
+    return WifiInfoDTO(
+        SSID: json['SSID'],
+        BSSID: json['BSSID'],
+        gateWay: json['gateWay'],
+        subnetMask: json['subnetMask'],
+        deviceMAC: json['deviceMAC'],
+        ipAddress: json['ipAddress']);
+  }
+
+  @override
+  String toString() {
+    return 'WifiInfoDTO{SSID: $SSID, BSSID: $BSSID, gateWay: $gateWay, subnetMask: $subnetMask, deviceMAC: $deviceMAC, ipAddress: $ipAddress}';
   }
 }

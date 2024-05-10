@@ -1,7 +1,5 @@
 package com.example.ptnet_plugin
 
-import androidx.annotation.NonNull
-
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -29,41 +27,41 @@ class PtnetPlugin : FlutterPlugin, MethodCallHandler {
         // Get data from dart
         val map: Map<String, Any?> = call.arguments as Map<String, Any?>
 
-        val address = map.getOrDefault("address", "") as String
-        val server = map.getOrDefault("server", "") as String
+        val ttl = map.getOrDefault("ttl", -1) as Int
         val port = map.getOrDefault("port", -1) as Int
         val timeout = map.getOrDefault("timeout", -1) as Int
+        val server = map.getOrDefault("server", "") as String
+        val address = map.getOrDefault("address", "") as String
+
         // Note: Lỗi ở Ping, reset máy thử ( recommend: ko dùng AVD-Android Virtual Device (AndroidStudio-setting cực)
+        val librariesHandler = LibrariesHandler()
         when (call.method) {
             "getPingResult" -> result.success(
-                LibrariesHandler(
-                    "ping",
-                    address = address
-                ).getResult()
+                librariesHandler.pingResult(address)
             )
 
             "getPageLoadResult" -> result.success(
-                LibrariesHandler(
-                    "pageLoad",
-                    address = address
-                ).getResult()
+                librariesHandler.pageLoadResult(address)
             )
 
             "getDnsLookupResult" -> result.success(
-                LibrariesHandler(
-                    "dnsLookup",
-                    address = address,
-                    server = server
-                ).getResult()
+                librariesHandler.dnsLookUpResult(address, server)
             )
 
             "getPortScanResult" -> result.success(
-                LibrariesHandler(
-                    "portScan",
-                    address = address,
-                    port = port,
-                    timeOut = timeout
-                ).getResult()
+                librariesHandler.portScanResult(address, port, timeout)
+            )
+
+            "getTraceRouteResult" -> result.success(
+                librariesHandler.traceRouteResult(address, ttl)
+            )
+
+            "getWifiScanResult" -> result.success(
+                librariesHandler.wifiScanResult()
+            )
+
+            "getWifiInfo" -> result.success(
+                librariesHandler.wifiInfo()
             )
 
             else -> result.notImplemented()

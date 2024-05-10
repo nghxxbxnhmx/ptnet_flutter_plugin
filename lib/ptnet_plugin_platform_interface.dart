@@ -27,14 +27,27 @@ abstract class PtnetPluginPlatform extends PlatformInterface {
     throw UnimplementedError('pingResult() has not been implemented.');
   }
 
-  Future<PageLoadDTO?> getPageLoadResult(String address) {
+  Future<String?> getPageLoadResult(String address) {
     throw UnimplementedError('pageLoadResult() has not been implemented.');
   }
 
-  Future<List<AnswerDTO>?> getDnsLookupResult(String address, String server) {
+  Future<List<String>?> getDnsLookupResult(String address, String server) {
     throw UnimplementedError('dnsLookupResult() has not been implemented.');
   }
-  Future<PortDTO?> getPortScanResult(String address, int port,int timeout) {
+
+  Future<PortDTO?> getPortScanResult(String address, int port, int timeout) {
     throw UnimplementedError('portScanResult() has not been implemented.');
+  }
+
+  Future<TraceHopDTO?> getTraceRouteResult(String address, int ttl) {
+    throw UnimplementedError('traceRouteResult() has not been implemented.');
+  }
+
+  Future<List<WifiScanResultDTO>?> getWifiScanResult() {
+    throw UnimplementedError('wifiScanResult() has not been implemented.');
+  }
+
+  Future<WifiInfoDTO?> getWifiInfo() {
+    throw UnimplementedError('wifiInfo() has not been implemented.');
   }
 }

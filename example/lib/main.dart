@@ -23,6 +23,7 @@ class _MyAppState extends State<MyApp> {
   // Controller - UI
   final inputServer = TextEditingController();
   final inputAddress = TextEditingController();
+  var visibleAddress = false;
   var visibleTTL = false;
   var visibleServer = false;
   var visiblePort = false;
@@ -44,7 +45,9 @@ class _MyAppState extends State<MyApp> {
     'PageLoad',
     'DnsLookup',
     'PortScan',
-    'TraceRoute'
+    'TraceRoute',
+    'WifiScan',
+    'WifiInfo'
   ];
   final ValueNotifier<int?> selectedTTL = ValueNotifier<int?>(null);
   final ValueNotifier<int?> selectedPortType = ValueNotifier<int?>(null);
@@ -72,10 +75,12 @@ class _MyAppState extends State<MyApp> {
       visibleTTL = false;
       visiblePort = false;
       visibleServer = false;
+      visibleAddress = true;
       visibleProgress = false;
       switch (actionValue) {
         case "DnsLookup":
           visibleServer = true;
+          inputServer.text = "8.8.8.8";
           break;
         case "PortScan":
           visibleTTL = true;
@@ -83,8 +88,12 @@ class _MyAppState extends State<MyApp> {
           timeLabel = false;
           break;
         case "TraceRoute":
-          visibleTTL = true;
-          timeLabel = true;
+          break;
+        case "WifiScan":
+          visibleAddress = false;
+          break;
+        case "WifiInfo":
+          visibleAddress = false;
           break;
         default:
           break;
@@ -129,10 +138,9 @@ class _MyAppState extends State<MyApp> {
   Future<void> pageLoadState() async {
     String address =
         (inputAddress.text.isNotEmpty) ? inputAddress.text : _initAddress;
-    PageLoadDTO pageLoadResult = PageLoadDTO(address: "", time: -1.0);
+    String pageLoadResult = "";
 
     int time = 10;
-    String error = "";
     // Start process  -------------------------------------------
     setState(() {
       _result = "";
@@ -146,14 +154,13 @@ class _MyAppState extends State<MyApp> {
         break;
       } else {
         try {
-          pageLoadResult = await _ptnetPlugin.getPageLoadResult(address) ??
-              PageLoadDTO(address: "", time: -1.0);
+          pageLoadResult = await _ptnetPlugin.getPageLoadResult(address) ?? "";
         } on Exception catch (e) {
-          error = "Fail to get page load result";
+          pageLoadResult = "Fail to get page load result";
         }
 
         setState(() {
-          _result += "$pageLoadResult\n";
+          _result += "Time: $pageLoadResult\n";
         });
         time--;
       }
@@ -168,18 +175,18 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> dnsLookupState() async {
-    List<AnswerDTO> dnsLookupResult = [];
+    List<String> dnsLookupResult = [];
     String address =
         (inputAddress.text.isNotEmpty) ? inputAddress.text : _initAddress;
     String server =
-        (inputServer.text.isNotEmpty) ? inputServer.text : _initAddress;
+        (inputServer.text.isNotEmpty) ? inputServer.text : "8.8.8.8";
     String error = "";
     // Start process  -------------------------------------------
     setState(() {
       _result = "";
-      executeEnable = false;
       inputAddress.text = address;
       inputServer.text = server;
+      executeEnable = false;
     });
     // Execute
     try {
@@ -270,6 +277,53 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> traceRouteState() async {
+    String address =
+        (inputAddress.text.isNotEmpty) ? inputAddress.text : _initAddress;
+
+    String error = "";
+    // Start process  -------------------------------------------
+    setState(() {
+      _result = "";
+      executeEnable = false;
+      inputAddress.text = address;
+    });
+    // Execute
+    var traceResult = TraceHopDTO(
+        hopNumber: 0, domain: "", ipAddress: "", time: -1, status: false);
+    var ttl = 1;
+    while (!traceResult.status) {
+      if (!executeEnable) {
+        setState(() {
+          _result = "ttl: $ttl";
+        });
+        try {
+          traceResult = await _ptnetPlugin.getTraceRouteResult(address, ttl) ??
+              TraceHopDTO(
+                  hopNumber: 0,
+                  domain: "",
+                  ipAddress: "",
+                  time: -1,
+                  status: false);
+        } on Exception {
+          error = "Fail to get trace route result";
+        }
+        ttl++;
+      } else {
+        break;
+      }
+    }
+
+    // End process   -------------------------------------------
+    if (!mounted) return;
+    executeEnable = true;
+    setState(() {
+      _result = "${traceResult.toString()}\nttl: ${ttl - 1}";
+    });
+  }
+
+  Future<void> wifiScanState() async {
+    String error = "";
+    List<WifiScanResultDTO> scanResult = [];
     // Start process  -------------------------------------------
     setState(() {
       _result = "";
@@ -277,11 +331,54 @@ class _MyAppState extends State<MyApp> {
     });
     // Execute
 
+    try {
+      scanResult = await _ptnetPlugin.getWifiScanResult() ?? [];
+    } on Exception {
+      error = "Fail to get wifi scan result";
+    }
+
     // End process   -------------------------------------------
     if (!mounted) return;
+    executeEnable = true;
+
     setState(() {
-      _result = "Traceroute Result nek";
-      executeEnable = true;
+      for (var element in scanResult) {
+        _result += "${element.toString()}\n";
+      }
+    });
+  }
+
+  Future<void> wifiInfoState() async {
+    String error = "";
+    // Start process  -------------------------------------------
+    setState(() {
+      _result = "";
+      executeEnable = false;
+    });
+    // Execute
+    WifiInfoDTO wifiInfo = WifiInfoDTO(
+        SSID: "",
+        BSSID: "",
+        gateWay: "",
+        subnetMask: "",
+        deviceMAC: "",
+        ipAddress: "");
+    try {
+      wifiInfo = await _ptnetPlugin.getWifiInfo() ?? wifiInfo;
+    } on Exception {
+      error = "Fail to get wifi scan result";
+    }
+
+    // End process   -------------------------------------------
+    if (!mounted) return;
+    executeEnable = true;
+
+    setState(() {
+      if(wifiInfo.BSSID.isEmpty){
+        _result = error;
+      }else{
+        _result = wifiInfo.toString();
+      }
     });
   }
 
@@ -300,6 +397,12 @@ class _MyAppState extends State<MyApp> {
         break;
       case "PortScan":
         portScanState();
+        break;
+      case "WifiScan":
+        wifiScanState();
+        break;
+      case "WifiInfo":
+        wifiInfoState();
         break;
       default:
         break;
@@ -338,7 +441,10 @@ class _MyAppState extends State<MyApp> {
                 actionValues: actionValues,
                 onChanged: onChanged,
               ),
-              IpForm(controller: inputAddress, enabled: executeEnable),
+              IpForm(
+                  controller: inputAddress,
+                  enabled: executeEnable,
+                  visible: visibleAddress),
               DNSServerForm(
                   visible: visibleServer,
                   enabled: executeEnable,

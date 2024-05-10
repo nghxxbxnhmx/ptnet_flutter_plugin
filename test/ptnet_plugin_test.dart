@@ -10,13 +10,13 @@ class MockPtnetPluginPlatform
     implements PtnetPluginPlatform {
 
   @override
-  Future<PageLoadDTO?> getPageLoadResult(String address) => Future.value(PageLoadDTO(address: "zing.vn",time:10.0));
+  Future<String?> getPageLoadResult(String address) => Future.value("10.0");
 
   @override
   Future<PingDTO?> getPingResult(String address)  => Future.value(PingDTO(address: "zing.vn",ip:"127.0.0.1",time:10.12));
 
   @override
-  Future<List<AnswerDTO>?> getDnsLookupResult(String address, String server) {
+  Future<List<String>?> getDnsLookupResult(String address, String server) {
     // TODO: implement getDnsLookupResult
     throw UnimplementedError();
   }
@@ -24,6 +24,24 @@ class MockPtnetPluginPlatform
   @override
   Future<PortDTO?> getPortScanResult(String address, int port, int timeout) {
     // TODO: implement getPortScanResult
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<TraceHopDTO?> getTraceRouteResult(String address, int ttl) {
+    // TODO: implement getTraceRouteResult
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<List<WifiScanResultDTO>?> getWifiScanResult() {
+    // TODO: implement getWifiScanResult
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<WifiInfoDTO?> getWifiInfo() {
+    // TODO: implement getWifiInfo
     throw UnimplementedError();
   }
 }

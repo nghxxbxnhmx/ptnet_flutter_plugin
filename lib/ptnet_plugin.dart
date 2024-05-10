@@ -17,25 +17,14 @@ class PtnetPlugin {
     });
   }
 
-  Future<PageLoadDTO?> getPageLoadResult(String address) {
-    return PtnetPluginPlatform.instance
-        .getPageLoadResult(address)
-        .then((PageLoadDTO? result) {
-      // Check if result is not null
-      if (result != null) {
-        return result;
-      } else {
-        return null;
-      }
-    }).catchError((error) {
-      return null;
-    });
+  Future<String?> getPageLoadResult(String address) {
+    return PtnetPluginPlatform.instance.getPageLoadResult(address);
   }
 
-  Future<List<AnswerDTO>?> getDnsLookupResult(String address, String server) {
+  Future<List<String>?> getDnsLookupResult(String address, String server) {
     return PtnetPluginPlatform.instance
         .getDnsLookupResult(address, server)
-        .then((List<AnswerDTO>? results) {
+        .then((List<String>? results) {
       // Check if result is not null
       if (results != null) {
         return results;
@@ -51,6 +40,51 @@ class PtnetPlugin {
     return PtnetPluginPlatform.instance
         .getPortScanResult(address, port, timeout)
         .then((PortDTO? results) {
+      // Check if result is not null
+      if (results != null) {
+        return results;
+      } else {
+        return null;
+      }
+    }).catchError((error) {
+      return null;
+    });
+  }
+
+  Future<TraceHopDTO?> getTraceRouteResult(String address, int ttl) {
+    return PtnetPluginPlatform.instance
+        .getTraceRouteResult(address, ttl)
+        .then((TraceHopDTO? results) {
+      // Check if result is not null
+      if (results != null) {
+        return results;
+      } else {
+        return null;
+      }
+    }).catchError((error) {
+      return null;
+    });
+  }
+
+  Future<List<WifiScanResultDTO>?> getWifiScanResult() {
+    return PtnetPluginPlatform.instance
+        .getWifiScanResult()
+        .then((List<WifiScanResultDTO>? results) {
+      // Check if result is not null
+      if (results != null) {
+        return results;
+      } else {
+        return null;
+      }
+    }).catchError((error) {
+      return null;
+    });
+  }
+
+  Future<WifiInfoDTO?> getWifiInfo() {
+    return PtnetPluginPlatform.instance
+        .getWifiInfo()
+        .then((WifiInfoDTO? results) {
       // Check if result is not null
       if (results != null) {
         return results;

@@ -30,15 +30,14 @@ class MethodChannelPtnetPlugin extends PtnetPluginPlatform {
   }
 
   @override
-  Future<PageLoadDTO?> getPageLoadResult(String address) async {
+  Future<String?> getPageLoadResult(String address) async {
     try {
       var dataToPass = <String, dynamic>{'address': address};
       final jsonResult = await methodChannel.invokeMethod<String>(
           'getPageLoadResult', dataToPass);
 
       if (jsonResult != null) {
-        final Map<String, dynamic> parsedJson = json.decode(jsonResult);
-        return PageLoadDTO.fromJson(parsedJson);
+        return jsonResult;
       } else {
         return null;
       }
@@ -48,7 +47,7 @@ class MethodChannelPtnetPlugin extends PtnetPluginPlatform {
   }
 
   @override
-  Future<List<AnswerDTO>?> getDnsLookupResult(
+  Future<List<String>?> getDnsLookupResult(
       String address, String server) async {
     try {
       var dataToPass = <String, dynamic>{'address': address, 'server': server};
@@ -57,9 +56,11 @@ class MethodChannelPtnetPlugin extends PtnetPluginPlatform {
 
       if (jsonResult != null) {
         final List<dynamic> list = json.decode(jsonResult);
-        final List<AnswerDTO> answerDTOs =
-            list.map((item) => AnswerDTO.fromJson(item)).toList();
-        return answerDTOs;
+        final List<String> dnsResults = [];
+        for (var element in list) {
+          dnsResults.add(element);
+        }
+        return dnsResults;
       } else {
         return null;
       }
@@ -69,9 +70,14 @@ class MethodChannelPtnetPlugin extends PtnetPluginPlatform {
   }
 
   @override
-  Future<PortDTO?> getPortScanResult(String address, int port,int timeout) async {
+  Future<PortDTO?> getPortScanResult(
+      String address, int port, int timeout) async {
     try {
-      var dataToPass = <String, dynamic>{'address': address, 'port': port, 'timeout': timeout};
+      var dataToPass = <String, dynamic>{
+        'address': address,
+        'port': port,
+        'timeout': timeout
+      };
       final jsonResult = await methodChannel.invokeMethod<String>(
           'getPortScanResult', dataToPass);
 
@@ -79,6 +85,65 @@ class MethodChannelPtnetPlugin extends PtnetPluginPlatform {
         final Map<String, dynamic> parsedJson = json.decode(jsonResult);
         final PortDTO portDTO = PortDTO.fromJson(parsedJson);
         return portDTO;
+      } else {
+        return null;
+      }
+    } catch (e) {
+      return null;
+    }
+  }
+
+  @override
+  Future<TraceHopDTO?> getTraceRouteResult(String address, int ttl) async {
+    try {
+      var dataToPass = <String, dynamic>{'address': address, 'ttl': ttl};
+      final jsonResult = await methodChannel.invokeMethod<String>(
+          'getTraceRouteResult', dataToPass);
+
+      if (jsonResult != null) {
+        final Map<String, dynamic> parsedJson = json.decode(jsonResult);
+        final TraceHopDTO traceHopDTO = TraceHopDTO.fromJson(parsedJson);
+        return traceHopDTO;
+      } else {
+        return null;
+      }
+    } catch (e) {
+      return null;
+    }
+  }
+
+  @override
+  Future<List<WifiScanResultDTO>?> getWifiScanResult() async {
+    try {
+      var dataToPass = <String, dynamic>{};
+      final jsonResult = await methodChannel.invokeMethod<String>(
+          'getWifiScanResult', dataToPass);
+
+      if (jsonResult != null) {
+        final List<dynamic> list = json.decode(jsonResult);
+        final List<WifiScanResultDTO> wifiScanResults = [];
+        for (var element in list) {
+          wifiScanResults.add(WifiScanResultDTO.fromJson(element));
+        }
+        return wifiScanResults;
+      } else {
+        return null;
+      }
+    } catch (e) {
+      return null;
+    }
+  }
+
+  Future<WifiInfoDTO?> getWifiInfo() async {
+    try {
+      var dataToPass = <String, dynamic>{};
+      final jsonResult = await methodChannel.invokeMethod<String>(
+          'getWifiInfo', dataToPass);
+
+      if (jsonResult != null) {
+        final Map<String, dynamic> parsedJson = json.decode(jsonResult);
+        final WifiInfoDTO wifiInfoDTO = WifiInfoDTO.fromJson(parsedJson);
+        return wifiInfoDTO;
       } else {
         return null;
       }

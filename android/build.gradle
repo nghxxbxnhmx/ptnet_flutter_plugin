@@ -68,7 +68,8 @@ android {
 
 
         // AAR Lib
-        implementation files("libs/shared-release-v1.0805.aar")
+//        implementation files("libs/shared-release-v1.0805.aar")
+        implementation files("libs/shared-release-v1.1005.testWifi.aar")
     }
 
     testOptions {
