@@ -44,6 +44,12 @@ class MockPtnetPluginPlatform
     // TODO: implement getWifiInfo
     throw UnimplementedError();
   }
+
+  @override
+  Future<TraceHopDTO?> getTraceRouteEndpoint(String address) {
+    // TODO: implement getTraceRouteEndpoint
+    throw UnimplementedError();
+  }
 }
 
 void main() {

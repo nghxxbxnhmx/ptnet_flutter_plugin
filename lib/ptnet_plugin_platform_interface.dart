@@ -39,9 +39,14 @@ abstract class PtnetPluginPlatform extends PlatformInterface {
     throw UnimplementedError('portScanResult() has not been implemented.');
   }
 
+  Future<TraceHopDTO?> getTraceRouteEndpoint(String address) {
+    throw UnimplementedError('traceRouteEndpoint() has not been implemented.');
+  }
+
   Future<TraceHopDTO?> getTraceRouteResult(String address, int ttl) {
     throw UnimplementedError('traceRouteResult() has not been implemented.');
   }
+
 
   Future<List<WifiScanResultDTO>?> getWifiScanResult() {
     throw UnimplementedError('wifiScanResult() has not been implemented.');

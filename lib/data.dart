@@ -17,7 +17,7 @@ class PingDTO {
 
   @override
   String toString() {
-    return 'PingDTO{address: $address, ip: $ip, time: $time}';
+    return 'address: $address, ip: $ip, time: $time';
   }
 }
 
@@ -37,7 +37,7 @@ class PortDTO {
 
   @override
   String toString() {
-    return 'PortDTO{address: $address, port: $port, open: $open}';
+    return 'address: $address, port: $port, open: $open';
   }
 }
 
@@ -66,7 +66,7 @@ class TraceHopDTO {
 
   @override
   String toString() {
-    return 'TraceHopDTO{hopNumber: $hopNumber, domain: $domain, ipAddress: $ipAddress, time: $time, status: $status}';
+    return 'hopNumber: $hopNumber, domain: $domain, ipAddress: $ipAddress, time: $time, status: $status';
   }
 }
 
@@ -75,14 +75,14 @@ class WifiScanResultDTO {
   final String bssid;
   final int channel;
   final int signalLevel;
-  final int bandwidth;
+  final int channelBandwidth;
 
   WifiScanResultDTO(
       {required this.ssid,
       required this.bssid,
       required this.channel,
       required this.signalLevel,
-      required this.bandwidth});
+      required this.channelBandwidth});
 
   factory WifiScanResultDTO.fromJson(Map<String, dynamic> json) {
     return WifiScanResultDTO(
@@ -90,12 +90,12 @@ class WifiScanResultDTO {
         bssid: json['bssid'],
         channel: int.parse(json['channel'].toString()),
         signalLevel: int.parse(json['signalLevel'].toString()),
-        bandwidth: int.parse(json['bandwidth'].toString()));
+        channelBandwidth: int.parse(json['channelBandwidth'].toString()));
   }
 
   @override
   String toString() {
-    return 'WifiScanResultDTO{ssid: $ssid, bssid: $bssid, channel: $channel, signalLevel: $signalLevel, bandwidth: $bandwidth}';
+    return '$ssid (Channel $channel: $signalLevel dBm, $channelBandwidth Mhz)';
   }
 }
 
@@ -127,6 +127,11 @@ class WifiInfoDTO {
 
   @override
   String toString() {
-    return 'WifiInfoDTO{SSID: $SSID, BSSID: $BSSID, gateWay: $gateWay, subnetMask: $subnetMask, deviceMAC: $deviceMAC, ipAddress: $ipAddress}';
+    return 'SSID: $SSID, BSSID: $BSSID, gateWay: $gateWay, subnetMask: $subnetMask, deviceMAC: $deviceMAC, ipAddress: $ipAddress';
   }
 }
+
+// Useless - bỏ (1,2 biến trả về -> không cân thiết)
+class PageLoadResult {}
+
+class DnsResult {}

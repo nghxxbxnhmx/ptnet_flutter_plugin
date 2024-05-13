@@ -103,17 +103,15 @@ class IpForm extends StatelessWidget {
   }
 }
 
-class TTLForm extends StatelessWidget {
+class TimeOutForm extends StatelessWidget {
   final bool visible;
   final bool enabled;
-  final bool label;
   final ValueNotifier<int?> selectedValue;
 
-  const TTLForm({
+  const TimeOutForm({
     super.key, // Adding Key? key parameter
     required this.visible,
     required this.enabled,
-    required this.label,
     required this.selectedValue,
   }); // Passing key to super constructor
 
@@ -149,7 +147,7 @@ class TTLForm extends StatelessWidget {
                 decoration: InputDecoration(
                   // Removed 'const' from InputDecoration
                   border: InputBorder.none,
-                  labelText: label ? "Time-to-live" : "Timeout",
+                  labelText: "Timeout",
                 ),
                 value: selectedValue.value,
                 items: dropdownItems,
@@ -267,6 +265,7 @@ class DNSServerForm extends StatelessWidget {
 
 class ExecuteButton extends StatelessWidget {
   final bool enabled;
+  final bool visible;
   final String actionValue;
   final void Function(String) onPressed;
   final void Function(String?) stopPressed;
@@ -274,6 +273,7 @@ class ExecuteButton extends StatelessWidget {
   const ExecuteButton({
     super.key,
     required this.enabled,
+    required this.visible,
     required this.actionValue,
     required this.onPressed,
     required this.stopPressed,
@@ -283,7 +283,9 @@ class ExecuteButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Builder(builder: (BuildContext context) {
       return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+        child: Visibility(
+          visible: visible,
           child: Row(children: [
             Visibility(
               visible: enabled,
@@ -303,28 +305,31 @@ class ExecuteButton extends StatelessWidget {
               ),
             ),
             Visibility(
-                visible: !enabled,
-                child: Expanded(
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                      textStyle: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 13,
-                        fontStyle: FontStyle.normal,
-                      ),
+              visible: !enabled,
+              child: Expanded(
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    textStyle: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 13,
+                      fontStyle: FontStyle.normal,
                     ),
-                    onPressed: !enabled ? () => stopPressed("") : null,
-                    child: const Text('Stop'),
                   ),
-                ))
-          ]));
+                  onPressed: !enabled ? () => stopPressed("") : null,
+                  child: const Text('Stop'),
+                ),
+              ),
+            )
+          ]),
+        ),
+      );
     });
   }
 }
 
 class CustomResultWidget extends StatelessWidget {
-  final bool visibleProgress;
+  final bool visible;
   final int currentPort;
   final int endPort;
   final String actionValue;
@@ -332,7 +337,7 @@ class CustomResultWidget extends StatelessWidget {
 
   const CustomResultWidget({
     super.key,
-    required this.visibleProgress,
+    required this.visible,
     required this.currentPort,
     required this.endPort,
     required this.actionValue,
@@ -342,38 +347,47 @@ class CustomResultWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Visibility(
-            visible: visibleProgress,
-            child: Column(
-              children: <Widget>[
-                SizedBox(
-                  width: 200,
-                  child: LinearProgressIndicator(
-                    value: currentPort / endPort, // Calculate progress value
-                    backgroundColor: Colors.grey[300],
-                    valueColor:
-                        const AlwaysStoppedAnimation<Color>(Colors.blue),
-                  ),
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Visibility(
+          visible: visible,
+          child: Column(
+            children: <Widget>[
+              SizedBox(
+                width: 200,
+                child: LinearProgressIndicator(
+                  value: currentPort / endPort, // Calculate progress value
+                  backgroundColor: Colors.grey[300],
+                  valueColor: const AlwaysStoppedAnimation<Color>(Colors.blue),
                 ),
-                const SizedBox(height: 10.0),
-                Text(
-                  'Progress: $currentPort / $endPort',
-                  // Display current progress value
-                  style: const TextStyle(fontSize: 20.0),
-                ),
-              ],
-            ),
+              ),
+              const SizedBox(height: 10.0),
+              Text(
+                'Progress: $currentPort / $endPort',
+                // Display current progress value
+                style: const TextStyle(fontSize: 20.0),
+              ),
+            ],
           ),
-          Padding(
+        ),
+        SizedBox(
+          width: double.maxFinite * 0.95,
+          height: 150,
+          child: Padding(
             padding:
                 const EdgeInsets.only(left: 8, right: 8, top: 4, bottom: 8),
-            child: Text(
-              "$actionValue's Result\n$result",
-              textAlign: TextAlign.center,
+            child: SingleChildScrollView(
+              // Wrap the Text widget with SingleChildScrollView
+              scrollDirection: Axis.vertical,
+              // Adjust the scroll direction if necessary
+              child: Text(
+                "$actionValue's Result$result",
+                textAlign: TextAlign.center,
+              ),
             ),
-          )
-        ]);
+          ),
+        )
+      ],
+    );
   }
 }

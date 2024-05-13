@@ -1,10 +1,13 @@
 package com.example.ptnet_plugin
 
+import android.content.Context
+import android.net.wifi.WifiManager
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
+
 
 /** PtnetPlugin */
 class PtnetPlugin : FlutterPlugin, MethodCallHandler {
@@ -13,10 +16,16 @@ class PtnetPlugin : FlutterPlugin, MethodCallHandler {
     /// This local reference serves to register the plugin with the Flutter Engine and unregister it
     /// when the Flutter Engine is detached from the Activity
     private lateinit var channel: MethodChannel
+    private lateinit var context: Context
+    private lateinit var wifiManager: WifiManager
 
     override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         channel = MethodChannel(flutterPluginBinding.binaryMessenger, "ptnet_plugin")
         channel.setMethodCallHandler(this)
+        context = flutterPluginBinding.applicationContext
+        wifiManager =
+            context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
+
     }
 
     override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
@@ -54,6 +63,10 @@ class PtnetPlugin : FlutterPlugin, MethodCallHandler {
 
             "getTraceRouteResult" -> result.success(
                 librariesHandler.traceRouteResult(address, ttl)
+            )
+
+            "getTraceRouteEndpoint" -> result.success(
+                librariesHandler.traceRouteEndpoint(address)
             )
 
             "getWifiScanResult" -> result.success(

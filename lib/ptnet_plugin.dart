@@ -51,6 +51,21 @@ class PtnetPlugin {
     });
   }
 
+  Future<TraceHopDTO?> getTraceRouteEndpoint(String address) {
+    return PtnetPluginPlatform.instance
+        .getTraceRouteEndpoint(address)
+        .then((TraceHopDTO? results) {
+      // Check if result is not null
+      if (results != null) {
+        return results;
+      } else {
+        return null;
+      }
+    }).catchError((error) {
+      return null;
+    });
+  }
+
   Future<TraceHopDTO?> getTraceRouteResult(String address, int ttl) {
     return PtnetPluginPlatform.instance
         .getTraceRouteResult(address, ttl)

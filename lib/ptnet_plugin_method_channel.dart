@@ -94,6 +94,25 @@ class MethodChannelPtnetPlugin extends PtnetPluginPlatform {
   }
 
   @override
+  Future<TraceHopDTO?> getTraceRouteEndpoint(String address) async {
+    try {
+      var dataToPass = <String, dynamic>{'address': address};
+      final jsonResult = await methodChannel.invokeMethod<String>(
+          'getTraceRouteResult', dataToPass);
+
+      if (jsonResult != null) {
+        final Map<String, dynamic> parsedJson = json.decode(jsonResult);
+        final TraceHopDTO traceHopDTO = TraceHopDTO.fromJson(parsedJson);
+        return traceHopDTO;
+      } else {
+        return null;
+      }
+    } catch (e) {
+      return null;
+    }
+  }
+
+  @override
   Future<TraceHopDTO?> getTraceRouteResult(String address, int ttl) async {
     try {
       var dataToPass = <String, dynamic>{'address': address, 'ttl': ttl};
@@ -134,11 +153,12 @@ class MethodChannelPtnetPlugin extends PtnetPluginPlatform {
     }
   }
 
+  @override
   Future<WifiInfoDTO?> getWifiInfo() async {
     try {
       var dataToPass = <String, dynamic>{};
-      final jsonResult = await methodChannel.invokeMethod<String>(
-          'getWifiInfo', dataToPass);
+      final jsonResult =
+          await methodChannel.invokeMethod<String>('getWifiInfo', dataToPass);
 
       if (jsonResult != null) {
         final Map<String, dynamic> parsedJson = json.decode(jsonResult);

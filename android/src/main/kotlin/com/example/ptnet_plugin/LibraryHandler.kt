@@ -58,24 +58,42 @@ class LibrariesHandler {
         }.get().toString()
     }
 
+    fun traceRouteEndpoint(address: String): String {
+        return CompletableFuture.supplyAsync {
+            try {
+                val tracerouteService = TracerouteService()
+                val traceDTO = tracerouteService.getEndPoint(address)
+                Gson().toJson(traceDTO)
+            } catch (e: Exception) {
+                throw RuntimeException("Failed to get end point: ${e.message}")
+            }
+        }.get().toString()
+    }
+
     fun traceRouteResult(address: String, ttl: Int): String {
-        return try {
-            val tracerouteService = TracerouteService()
-            val traceDTO = tracerouteService.trace(address, ttl)
-            Gson().toJson(traceDTO)
-        } catch (e: Exception) {
-            throw RuntimeException("Failed to trace route: ${e.message}")
-        }
+        return CompletableFuture.supplyAsync {
+            try {
+                val tracerouteService = TracerouteService()
+                val traceDTO = tracerouteService.trace(address, ttl)
+                Gson().toJson(traceDTO)
+            } catch (e: Exception) {
+                throw RuntimeException("Failed to trace: ${e.message}")
+            }
+        }.get().toString()
     }
 
     fun wifiScanResult(): String {
-        return try {
-            val wifiScanService = WifiScanService()
-            var wifiScanResult = wifiScanService.scan()
-            Gson().toJson(wifiScanResult)
-        } catch (e: Exception) {
-            throw RuntimeException("Failed to wifi scan: ${e.message}")
-        }
+        return CompletableFuture.supplyAsync {
+            try {
+                val wifiScanService = WifiScanService()
+                // Rescan before go again
+                wifiScanService.startScan()
+                val wifiScanResult = wifiScanService.getScanResult()
+                Gson().toJson(wifiScanResult)
+            } catch (e: Exception) {
+                throw RuntimeException("Failed to wifi scan: ${e.message}")
+            }
+        }.get().toString()
     }
 
     fun wifiInfo(): String {

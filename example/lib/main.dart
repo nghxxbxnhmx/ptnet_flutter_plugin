@@ -1,7 +1,10 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'dart:async';
 
 import 'package:ptnet_plugin/data.dart';
+import 'package:ptnet_plugin/permission.dart';
 import 'package:ptnet_plugin/ptnet_plugin.dart';
 import 'package:ptnet_plugin_example/widget.dart';
 
@@ -18,19 +21,22 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   String _result = '';
-  final _ptnetPlugin = PtnetPlugin();
+  final _plugin = PtnetPlugin();
 
   // Controller - UI
   final inputServer = TextEditingController();
   final inputAddress = TextEditingController();
-  var visibleAddress = false;
-  var visibleTTL = false;
-  var visibleServer = false;
-  var visiblePort = false;
-  var visibleProgress = false;
-  var executeEnable = false;
+
+  // TTL - Port - Server - Address - Progress - Execute
+  var visibleUI = [false, false, false, false, false, true];
   var editEnable = false;
+  var executeEnable = false;
+
   var timeLabel = false;
+
+  // Realtime - update
+  Timer? _timer;
+  static const int delayMillis = 30000; // Change the delay as needed
 
   // Unchanged Values
   final int _initTTL = -1;
@@ -54,6 +60,7 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void dispose() {
+    _timer?.cancel();
     selectedTTL.dispose(); // Don't forget to dispose of the ValueNotifier
     selectedPortType.dispose();
     super.dispose();
@@ -62,148 +69,188 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    initInput();
+    PermissionResquest().requestPermission();
+    initAction();
   }
 
-  void initInput() {
-    inputAddress.text = _initAddress;
+  void initValue() {
     _result = "";
+    visibleUI.fillRange(
+        0, 6, false); // Initialize all elements of visibleUI to false
+    visibleUI[3] = true; // Address
+    visibleUI[5] = true; // Execute
     executeEnable = true;
     selectedTTL.value = 1;
     selectedPortType.value = 0;
+    inputAddress.text = _initAddress;
+  }
+
+  void initAction() {
+    _timer?.cancel();
+    initValue();
+    switch (actionValue) {
+      case "DnsLookup":
+        visibleUI[2] = true;
+        inputServer.text = "8.8.8.8";
+        break;
+      case "PortScan":
+        visibleUI[0] = true; // TTL
+        visibleUI[1] = true; // Port
+        timeLabel = false;
+        break;
+      case "WifiScan":
+        visibleUI[3] = false;
+        visibleUI[5] = false;
+        break;
+      case "WifiInfo":
+        visibleUI[3] = false;
+        break;
+      default:
+        break;
+    }
+  }
+
+  // Act use by Execute
+  void callState(String act) {
+    Map<String, Function> stateFunctions = {
+      "Ping": pingState,
+      "PageLoad": pageLoadState,
+      "DnsLookup": dnsLookupState,
+      "TraceRoute": traceRouteState,
+      "PortScan": portScanState,
+      "WifiInfo": wifiInfoState,
+    };
+
+    stateFunctions[act]?.call();
+  }
+
+  // UI processor
+  void executeHandle(bool status) {
     setState(() {
-      visibleTTL = false;
-      visiblePort = false;
-      visibleServer = false;
-      visibleAddress = true;
-      visibleProgress = false;
-      switch (actionValue) {
-        case "DnsLookup":
-          visibleServer = true;
-          inputServer.text = "8.8.8.8";
-          break;
-        case "PortScan":
-          visibleTTL = true;
-          visiblePort = true;
-          timeLabel = false;
-          break;
-        case "TraceRoute":
-          break;
-        case "WifiScan":
-          visibleAddress = false;
-          break;
-        case "WifiInfo":
-          visibleAddress = false;
-          break;
-        default:
-          break;
-      }
+      executeEnable = status;
+    });
+  }
+
+  void editableHandle(bool status) {
+    setState(() {
+      editEnable = status;
+    });
+  }
+
+  void resultHandle(String result) {
+    setState(() {
+      _result = result;
+    });
+  }
+
+  void setInputAddress(String address) {
+    inputAddress.text = address;
+  }
+
+  String getInputAddress() {
+    return (inputAddress.text.isNotEmpty) ? inputAddress.text : _initAddress;
+  }
+
+  void setInputServer(String server) {
+    inputAddress.text = server;
+  }
+
+  String getInputServer() {
+    return (inputServer.text.isNotEmpty) ? inputServer.text : "8.8.8.8";
+  }
+
+  void visibleControl(int index, bool status) {
+    setState(() {
+      visibleUI[index] = status;
     });
   }
 
   Future<void> pingState() async {
-    // Start process  -------------------------------------------
-    setState(() {
-      executeEnable = false;
-    });
-
-    PingDTO pingResult = PingDTO(address: "", ip: "", time: -1.0);
     String error = "";
-    String address =
-        (inputAddress.text.isNotEmpty) ? inputAddress.text : _initAddress;
+    String address = getInputAddress();
+    PingDTO pingResult = PingDTO(address: "", ip: "", time: -1.0);
+    // Start process  -------------------------------------------
+    resultHandle("");
+    executeHandle(false);
+    setInputAddress(address);
 
     // Execute
     try {
-      // pingResult = await _ptnetPlugin.getPingResult(address) ??
-      //     'Invalid Ping Result';
-      pingResult = await _ptnetPlugin.getPingResult(address) ??
-          PingDTO(address: "", ip: "", time: -1.0);
+      pingResult = await _plugin.getPingResult(address) ?? pingResult;
     } on Exception catch (e) {
       error = e.toString();
     }
 
-    if (!mounted) return;
-
     // End process   -------------------------------------------
-    setState(() {
-      if (pingResult.time == -1.0) {
-        _result = 'Failed to get ping result.';
-      } else {
-        _result = "$pingResult";
-      }
-      executeEnable = true;
-    });
+    if (!mounted) return;
+    if (error.isNotEmpty) {
+      resultHandle(pingResult.toString());
+    } else {
+      resultHandle('Failed to get ping result');
+    }
+    executeHandle(true);
   }
 
   Future<void> pageLoadState() async {
-    String address =
-        (inputAddress.text.isNotEmpty) ? inputAddress.text : _initAddress;
-    String pageLoadResult = "";
-
     int time = 10;
+    String pageLoadResult = "";
+    String address = getInputAddress();
     // Start process  -------------------------------------------
-    setState(() {
-      _result = "";
-      editEnable = false;
-      executeEnable = false;
-      inputAddress.text = address;
-    });
+    resultHandle("");
+    executeHandle(false);
+    editableHandle(false);
+    setInputAddress(address);
+
     // Execute
     while (time > 0) {
       if (executeEnable) {
         break;
       } else {
         try {
-          pageLoadResult = await _ptnetPlugin.getPageLoadResult(address) ?? "";
+          pageLoadResult = await _plugin.getPageLoadResult(address) ?? "";
         } on Exception catch (e) {
           pageLoadResult = "Fail to get page load result";
         }
 
-        setState(() {
-          _result += "Time: $pageLoadResult\n";
-        });
+        resultHandle("$_result\nTime: $pageLoadResult ms");
         time--;
       }
     }
 
     // End process   -------------------------------------------
     if (!mounted) return;
-    setState(() {
-      executeEnable = true;
-      editEnable = true;
-    });
+    executeHandle(true);
+    editableHandle(true);
   }
 
   Future<void> dnsLookupState() async {
-    List<String> dnsLookupResult = [];
-    String address =
-        (inputAddress.text.isNotEmpty) ? inputAddress.text : _initAddress;
-    String server =
-        (inputServer.text.isNotEmpty) ? inputServer.text : "8.8.8.8";
     String error = "";
+    List<String> dnsLookupResult = [];
+    String address = getInputAddress();
+    String server = getInputServer();
     // Start process  -------------------------------------------
-    setState(() {
-      _result = "";
-      inputAddress.text = address;
-      inputServer.text = server;
-      executeEnable = false;
-    });
+    resultHandle("");
+    setInputAddress(address);
+    setInputServer(server);
+    executeHandle(false);
+
     // Execute
     try {
-      dnsLookupResult =
-          await _ptnetPlugin.getDnsLookupResult(address, server) ?? [];
+      dnsLookupResult = await _plugin.getDnsLookupResult(address, server) ?? [];
     } on Exception {
       error = "Fail to get page load result";
     }
 
-    if (!mounted) return;
     // End process   -------------------------------------------
-    setState(() {
+    if (!mounted) return;
+    if (error.isNotEmpty) {
+      resultHandle(error);
+    } else {
       for (var element in dnsLookupResult) {
-        _result += "$element\n";
+        resultHandle("$_result\n$element");
       }
-      executeEnable = true;
-    });
+      executeHandle(true);
+    }
   }
 
   int _currentPort = 0;
@@ -234,32 +281,30 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> portScanState() async {
-    String address =
-        (inputAddress.text.isNotEmpty) ? inputAddress.text : _initAddress;
-    int timeout = int.tryParse(selectedTTL.value.toString()) ?? 1;
-    selectedPortRange();
-
     String error = "";
+    String address = getInputAddress();
+    int timeout = int.tryParse(selectedTTL.value.toString()) ?? 1;
+    PortDTO portDTO = PortDTO(address: "", port: -1, open: false);
+    selectedPortRange();
     // Start process  -------------------------------------------
-    setState(() {
-      _result = "";
-      executeEnable = false;
-      visibleProgress = true;
-      inputAddress.text = address;
-    });
+    resultHandle("");
+    executeHandle(false);
+    visibleControl(4, true);
+    setInputAddress(address);
+
     // Execute
     for (var port = _rootPort; port <= _endPort; port++) {
+      portDTO = PortDTO(address: "", port: -1, open: false);
       if (!executeEnable) {
         try {
-          PortDTO portDTO =
-              await _ptnetPlugin.getPortScanResult(address, port, timeout) ??
-                  PortDTO(address: "", port: -1, open: false);
-          setState(() {
-            if (portDTO.port != -1 && portDTO.open) {
-              _result += "$portDTO\n";
-            }
-            _currentPort = port;
-          });
+          portDTO = await _plugin.getPortScanResult(address, port, timeout) ??
+              portDTO;
+          if (portDTO.port != -1 && portDTO.open) {
+            resultHandle("$_result\n$portDTO");
+            setState(() {
+              _currentPort = port;
+            });
+          }
         } on Exception {
           error = "Fail to get port scan result";
         }
@@ -268,45 +313,79 @@ class _MyAppState extends State<MyApp> {
 
     // End process   -------------------------------------------
     if (!mounted) return;
-    setState(() {
-      executeEnable = true;
+    if (error.isNotEmpty) {
+      resultHandle(error);
+    } else {
+      executeHandle(true);
       if (_currentPort == _endPort) {
-        visibleProgress = false;
+        visibleControl(4, false);
       }
-    });
+    }
   }
 
   Future<void> traceRouteState() async {
-    String address =
-        (inputAddress.text.isNotEmpty) ? inputAddress.text : _initAddress;
-
     String error = "";
-    // Start process  -------------------------------------------
-    setState(() {
-      _result = "";
-      executeEnable = false;
-      inputAddress.text = address;
-    });
-    // Execute
+    String address = getInputAddress();
+    List<TraceHopDTO> traceList = [];
+    var hop1 = TraceHopDTO(
+        hopNumber: 0, domain: "", ipAddress: "", time: -1, status: false);
+    var hop2 = TraceHopDTO(
+        hopNumber: 0, domain: "", ipAddress: "", time: -1, status: false);
     var traceResult = TraceHopDTO(
         hopNumber: 0, domain: "", ipAddress: "", time: -1, status: false);
+    var endpoint = TraceHopDTO(
+        hopNumber: 0, domain: "", ipAddress: "", time: -1, status: false);
+    // Start process  -------------------------------------------
+    resultHandle("");
+    executeHandle(false);
+    setInputAddress(address);
+
+    // Execute
+    try {
+      endpoint = await _plugin.getTraceRouteEndpoint(address) ?? endpoint;
+    } on Exception {
+      error = "Fail to get endpoint";
+    }
+
     var ttl = 1;
-    while (!traceResult.status) {
+    while (traceResult.ipAddress != endpoint.ipAddress || ttl <= 255) {
+      traceResult = TraceHopDTO(
+          hopNumber: 0, domain: "", ipAddress: "", time: -1, status: false);
+      // Stop / Run
       if (!executeEnable) {
-        setState(() {
-          _result = "ttl: $ttl";
-        });
         try {
-          traceResult = await _ptnetPlugin.getTraceRouteResult(address, ttl) ??
-              TraceHopDTO(
-                  hopNumber: 0,
-                  domain: "",
-                  ipAddress: "",
-                  time: -1,
-                  status: false);
+          traceResult =
+              await _plugin.getTraceRouteResult(address, ttl) ?? traceResult;
+          if (traceResult.hopNumber != 0) {
+            traceList.add(traceResult);
+          }
         } on Exception {
           error = "Fail to get trace route result";
         }
+
+        if (error.isEmpty) {
+          resultHandle("$_result\n${traceResult.toString()}");
+        } else {
+          resultHandle("$_result\nRequest timeout!!!");
+        }
+
+        if (traceList.length == 2) {
+          hop1 = traceList[0];
+          hop2 = traceList[1];
+        }
+        if (traceList.length > 2) {
+          hop1 = traceList[traceList.length - 2];
+          hop2 = traceList[traceList.length - 1];
+        }
+
+        if (traceResult.ipAddress == endpoint.ipAddress) {
+          break;
+        } else {
+          if (hop1.ipAddress == hop2.ipAddress && hop1.ipAddress.isNotEmpty) {
+            break;
+          }
+        }
+
         ttl++;
       } else {
         break;
@@ -315,47 +394,49 @@ class _MyAppState extends State<MyApp> {
 
     // End process   -------------------------------------------
     if (!mounted) return;
-    executeEnable = true;
-    setState(() {
-      _result = "${traceResult.toString()}\nttl: ${ttl - 1}";
-    });
+    executeHandle(true);
+  }
+
+  void wifiScanHandle() {
+    wifiScanState();
+    _timer = Timer.periodic(const Duration(milliseconds: delayMillis),
+        (Timer t) => wifiScanState());
   }
 
   Future<void> wifiScanState() async {
     String error = "";
     List<WifiScanResultDTO> scanResult = [];
-    // Start process  -------------------------------------------
-    setState(() {
-      _result = "";
-      executeEnable = false;
-    });
-    // Execute
 
-    try {
-      scanResult = await _ptnetPlugin.getWifiScanResult() ?? [];
-    } on Exception {
-      error = "Fail to get wifi scan result";
+    // Start process
+    resultHandle(_result);
+
+    // Execute
+    if (actionValue == 'WifiScan') {
+      // Attempt to rescan Wi-Fi networks
+      try {
+        // Get the Wi-Fi scan results
+        scanResult = await _plugin.getWifiScanResult() ?? scanResult;
+      } catch (e) {
+        error = "Failed to get Wi-Fi scan result: $e"; // Update error message
+      }
+    } else {
+      _timer?.cancel();
     }
 
     // End process   -------------------------------------------
     if (!mounted) return;
-    executeEnable = true;
-
-    setState(() {
+    if (scanResult.isNotEmpty) {
+      _result = "";
       for (var element in scanResult) {
-        _result += "${element.toString()}\n";
+        resultHandle("_result\n${element.toString()}");
       }
-    });
+    } else {
+      _result = _result;
+    }
   }
 
   Future<void> wifiInfoState() async {
     String error = "";
-    // Start process  -------------------------------------------
-    setState(() {
-      _result = "";
-      executeEnable = false;
-    });
-    // Execute
     WifiInfoDTO wifiInfo = WifiInfoDTO(
         SSID: "",
         BSSID: "",
@@ -363,49 +444,24 @@ class _MyAppState extends State<MyApp> {
         subnetMask: "",
         deviceMAC: "",
         ipAddress: "");
+    // Start process  -------------------------------------------
+    resultHandle("");
+    executeHandle(false);
+
+    // Execute
     try {
-      wifiInfo = await _ptnetPlugin.getWifiInfo() ?? wifiInfo;
+      wifiInfo = await _plugin.getWifiInfo() ?? wifiInfo;
     } on Exception {
-      error = "Fail to get wifi scan result";
+      error = "Fail to get wifi info";
     }
 
     // End process   -------------------------------------------
     if (!mounted) return;
-    executeEnable = true;
-
-    setState(() {
-      if(wifiInfo.BSSID.isEmpty){
-        _result = error;
-      }else{
-        _result = wifiInfo.toString();
-      }
-    });
-  }
-
-  void callState(String act) {
-    switch (act) {
-      case "Ping":
-        pingState();
-        break;
-      case "PageLoad":
-        pageLoadState();
-        break;
-      case "DnsLookup":
-        dnsLookupState();
-      case "TraceRoute":
-        traceRouteState();
-        break;
-      case "PortScan":
-        portScanState();
-        break;
-      case "WifiScan":
-        wifiScanState();
-        break;
-      case "WifiInfo":
-        wifiInfoState();
-        break;
-      default:
-        break;
+    executeHandle(true);
+    if (error.isNotEmpty) {
+      resultHandle(error);
+    } else {
+      resultHandle("\n${wifiInfo.toString()}");
     }
   }
 
@@ -414,7 +470,14 @@ class _MyAppState extends State<MyApp> {
       actionValue =
           newValue!; // Update the actionValue variable with the newly selected value
       // Call any other methods or update any other variables as needed
-      initInput(); // Example: Call initInput method
+      initAction(); // Example: Call initAction method
+      switch (actionValue) {
+        case "WifiScan":
+          wifiScanHandle();
+          break;
+        default:
+          break;
+      }
     });
   }
 
@@ -444,30 +507,30 @@ class _MyAppState extends State<MyApp> {
               IpForm(
                   controller: inputAddress,
                   enabled: executeEnable,
-                  visible: visibleAddress),
+                  visible: visibleUI[3]),
               DNSServerForm(
-                  visible: visibleServer,
+                  visible: visibleUI[2],
                   enabled: executeEnable,
                   inputServer: inputServer),
               PortRangeForm(
-                  visible: visiblePort,
+                  visible: visibleUI[1],
                   enabled: executeEnable,
                   selectedPortType: selectedPortType),
-              TTLForm(
-                visible: visibleTTL,
+              TimeOutForm(
+                visible: visibleUI[0],
                 enabled: executeEnable,
-                label: timeLabel,
                 selectedValue: selectedTTL,
               ),
               const SizedBox(height: 30),
               ExecuteButton(
+                  visible: visibleUI[5],
                   enabled: executeEnable,
                   actionValue: actionValue,
                   onPressed: callState,
                   stopPressed: stopExecute),
               const SizedBox(height: 12),
               CustomResultWidget(
-                visibleProgress: visibleProgress,
+                visible: visibleUI[4],
                 currentPort: _currentPort - _rootPort + 1,
                 endPort: _endPort - _rootPort + 1,
                 actionValue: actionValue,
