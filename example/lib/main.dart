@@ -32,16 +32,14 @@ class _MyAppState extends State<MyApp> {
   var editEnable = false;
   var executeEnable = false;
 
-  var timeLabel = false;
+  var height = [4,8,4,4,8,8,4];
 
   // Realtime - update
   Timer? _timer;
   static const int delayMillis = 30000; // Change the delay as needed
 
   // Unchanged Values
-  final int _initTTL = -1;
   final _initAddress = 'zing.vn';
-
   final String _dnsServer = "8.8.8.8";
 
   // Changed Values
@@ -96,7 +94,6 @@ class _MyAppState extends State<MyApp> {
       case "PortScan":
         visibleUI[0] = true; // TTL
         visibleUI[1] = true; // Port
-        timeLabel = false;
         break;
       case "WifiScan":
         visibleUI[3] = false;
@@ -152,11 +149,11 @@ class _MyAppState extends State<MyApp> {
   }
 
   void setInputServer(String server) {
-    inputAddress.text = server;
+    inputServer.text = server;
   }
 
   String getInputServer() {
-    return (inputServer.text.isNotEmpty) ? inputServer.text : "8.8.8.8";
+    return (inputServer.text.isNotEmpty) ? inputServer.text : _dnsServer;
   }
 
   void visibleControl(int index, bool status) {
@@ -183,10 +180,10 @@ class _MyAppState extends State<MyApp> {
 
     // End process   -------------------------------------------
     if (!mounted) return;
-    if (error.isNotEmpty) {
-      resultHandle(pingResult.toString());
+    if (pingResult.time != -1) {
+      resultHandle("\n${pingResult.toString()}");
     } else {
-      resultHandle('Failed to get ping result');
+      resultHandle('\nFailed to get ping result');
     }
     executeHandle(true);
   }
@@ -301,20 +298,20 @@ class _MyAppState extends State<MyApp> {
               portDTO;
           if (portDTO.port != -1 && portDTO.open) {
             resultHandle("$_result\n$portDTO");
-            setState(() {
-              _currentPort = port;
-            });
           }
         } on Exception {
           error = "Fail to get port scan result";
         }
+        setState(() {
+          _currentPort = port;
+        });
       }
     }
 
     // End process   -------------------------------------------
     if (!mounted) return;
     if (error.isNotEmpty) {
-      resultHandle(error);
+      resultHandle("\n$error");
     } else {
       executeHandle(true);
       if (_currentPort == _endPort) {
@@ -428,7 +425,7 @@ class _MyAppState extends State<MyApp> {
     if (scanResult.isNotEmpty) {
       _result = "";
       for (var element in scanResult) {
-        resultHandle("_result\n${element.toString()}");
+        resultHandle("$_result\n${element.toString()}");
       }
     } else {
       _result = _result;
@@ -459,7 +456,7 @@ class _MyAppState extends State<MyApp> {
     if (!mounted) return;
     executeHandle(true);
     if (error.isNotEmpty) {
-      resultHandle(error);
+      resultHandle("\n$error");
     } else {
       resultHandle("\n${wifiInfo.toString()}");
     }
@@ -535,6 +532,7 @@ class _MyAppState extends State<MyApp> {
                 endPort: _endPort - _rootPort + 1,
                 actionValue: actionValue,
                 result: _result,
+                resultHeight: height[actionValues.indexOf(actionValue)],
               ),
             ],
           ),

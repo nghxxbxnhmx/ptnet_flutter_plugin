@@ -334,6 +334,7 @@ class CustomResultWidget extends StatelessWidget {
   final int endPort;
   final String actionValue;
   final String result;
+  final int resultHeight;
 
   const CustomResultWidget({
     super.key,
@@ -342,6 +343,7 @@ class CustomResultWidget extends StatelessWidget {
     required this.endPort,
     required this.actionValue,
     required this.result,
+    required this.resultHeight,
   });
 
   @override
@@ -372,7 +374,7 @@ class CustomResultWidget extends StatelessWidget {
         ),
         SizedBox(
           width: double.maxFinite * 0.95,
-          height: 150,
+          height: resultHeight*50,
           child: Padding(
             padding:
                 const EdgeInsets.only(left: 8, right: 8, top: 4, bottom: 8),
