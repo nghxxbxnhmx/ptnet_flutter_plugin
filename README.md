@@ -103,13 +103,6 @@ This Flutter application uses the PTnet library to perform various network-relat
 7. **PortScan**
    - Description: Scans for open ports on a given host, port.
 
-Feel free to adjust the descriptions and usage examples to better fit your project's needs.
-
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a pull request.
-
 ## License
 
 ...
