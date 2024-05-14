@@ -1,7 +1,5 @@
-import 'dart:ffi';
-
-import 'package:flutter/material.dart';
 import 'dart:async';
+import 'package:flutter/material.dart';
 
 import 'package:ptnet_plugin/data.dart';
 import 'package:ptnet_plugin/permission.dart';
@@ -181,7 +179,7 @@ class _MyAppState extends State<MyApp> {
     // End process   -------------------------------------------
     if (!mounted) return;
     if (pingResult.time != -1) {
-      resultHandle("\n${pingResult.toString()}");
+      resultHandle("\n${pingResult}");
     } else {
       resultHandle('\nFailed to get ping result');
     }
@@ -347,7 +345,7 @@ class _MyAppState extends State<MyApp> {
     var ttl = 1;
     while (traceResult.ipAddress != endpoint.ipAddress || ttl <= 255) {
       traceResult = TraceHopDTO(
-          hopNumber: 0, domain: "", ipAddress: "", time: -1, status: false);
+          hopNumber: ttl, domain: "", ipAddress: "", time: -1, status: false);
       // Stop / Run
       if (!executeEnable) {
         try {
@@ -361,7 +359,7 @@ class _MyAppState extends State<MyApp> {
         }
 
         if (error.isEmpty) {
-          resultHandle("$_result\n${traceResult.toString()}");
+          resultHandle("$_result\n${traceResult}");
         } else {
           resultHandle("$_result\nRequest timeout!!!");
         }
@@ -370,6 +368,7 @@ class _MyAppState extends State<MyApp> {
           hop1 = traceList[0];
           hop2 = traceList[1];
         }
+
         if (traceList.length > 2) {
           hop1 = traceList[traceList.length - 2];
           hop2 = traceList[traceList.length - 1];
@@ -425,7 +424,7 @@ class _MyAppState extends State<MyApp> {
     if (scanResult.isNotEmpty) {
       _result = "";
       for (var element in scanResult) {
-        resultHandle("$_result\n${element.toString()}");
+        resultHandle("$_result\n${element}");
       }
     } else {
       _result = _result;
@@ -458,7 +457,7 @@ class _MyAppState extends State<MyApp> {
     if (error.isNotEmpty) {
       resultHandle("\n$error");
     } else {
-      resultHandle("\n${wifiInfo.toString()}");
+      resultHandle("\n${wifiInfo}");
     }
   }
 

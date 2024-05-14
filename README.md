@@ -1,4 +1,3 @@
-
 # Flutter App
 
 This Flutter application utilizes the `ptnet_plugin` for network functionalities.
@@ -71,10 +70,11 @@ This Flutter application uses the PTnet library to perform various network-relat
    - ***Endpoint***   : Find endpoint based on given host.
    - ***Description***: Declare endpoint -> TraceRoute loop until reach endpoints
    ```dart
+   address = "zing.vn";
    TraceHopDTO endpoint = await _plugin.getTraceRouteEndpoint(address) ?? ...;
    int ttl = 1
    while(!reachEndpoint){
-     TraceHopDTO traceResult = await _plugin.getTraceRouteResult(address, ttl) ?? ...;
+     TraceHopDTO traceResult = await _plugin.getTraceRouteResult(address,ttl) ?? ...
      traceList.add(traceResult)
      if(reachEndpoint){
        break;
@@ -87,6 +87,9 @@ This Flutter application uses the PTnet library to perform various network-relat
 
 4. **DNSLookup**
    - Description: Performs a DNS lookup for the given domain and dns server.
+   ```dart
+   dnsResults = getDnsLookupResult("zing.vn", "8.8.8.8")
+   ```
 
 5. **WifiScan**
    - ***Description***: Scans for available Wi-Fi networks.
@@ -99,17 +102,14 @@ This Flutter application uses the PTnet library to perform various network-relat
 
 6. **WifiInfo**
    - Description: Retrieves information about the connected Wi-Fi network.
+   ```dart
+      wifiInfoDTO = await _plugin.getWifiInfo()  ??  ...;
+   ```
 
 7. **PortScan**
-   - Description: Scans for open ports on a given host, port.
-
-Feel free to adjust the descriptions and usage examples to better fit your project's needs.
-
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a pull request.
+   - Description: Scans for open ports on a given host, port, timeout (using loop)
+   ```dart
+      portScanDTO = getPortScanResult(host = "zing.vn",port =  1, timeout = 80 /*recommend*/)  ??  ...;
+   ```
 
 ## License
-
-...

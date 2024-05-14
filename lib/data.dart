@@ -14,11 +14,6 @@ class PingDTO {
           .substring(0, json['time'].toString().indexOf('.') + 3)),
     );
   }
-
-  @override
-  String toString() {
-    return 'address: $address, ip: $ip, time: $time';
-  }
 }
 
 class PortDTO {
@@ -33,11 +28,6 @@ class PortDTO {
         address: json['address'],
         port: json['port'],
         open: bool.parse(json['open'].toString()));
-  }
-
-  @override
-  String toString() {
-    return 'address: $address, port: $port, open: $open';
   }
 }
 
@@ -63,11 +53,6 @@ class TraceHopDTO {
         time: double.parse(json['time'].toString()),
         status: bool.parse(json['status'].toString()));
   }
-
-  @override
-  String toString() {
-    return 'hopNumber: $hopNumber, domain: $domain, ipAddress: $ipAddress, time: $time, status: $status';
-  }
 }
 
 class WifiScanResultDTO {
@@ -91,11 +76,6 @@ class WifiScanResultDTO {
         channel: int.parse(json['channel'].toString()),
         signalLevel: int.parse(json['signalLevel'].toString()),
         channelBandwidth: int.parse(json['channelBandwidth'].toString()));
-  }
-
-  @override
-  String toString() {
-    return '$ssid (Channel $channel: $signalLevel dBm, $channelBandwidth Mhz)';
   }
 }
 
@@ -124,14 +104,8 @@ class WifiInfoDTO {
         deviceMAC: json['deviceMAC'],
         ipAddress: json['ipAddress']);
   }
-
-  @override
-  String toString() {
-    return 'SSID: $SSID, BSSID: $BSSID, gateWay: $gateWay, subnetMask: $subnetMask, deviceMAC: $deviceMAC, ipAddress: $ipAddress';
-  }
 }
 
 // Useless - bỏ (1,2 biến trả về -> không cân thiết)
-class PageLoadResult {}
-
-class DnsResult {}
+// class PageLoadResult {}
+// class DnsResult {}
