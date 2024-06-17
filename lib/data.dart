@@ -14,6 +14,14 @@ class PingDTO {
           .substring(0, json['time'].toString().indexOf('.') + 3)),
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'address': address,
+      'ip': ip,
+      'time': time.toString(),
+    };
+  }
 }
 
 class PortDTO {
@@ -28,6 +36,14 @@ class PortDTO {
         address: json['address'],
         port: json['port'],
         open: bool.parse(json['open'].toString()));
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'address': address,
+      'port': port,
+      'open': open,
+    };
   }
 }
 
@@ -61,13 +77,15 @@ class WifiScanResultDTO {
   final int channel;
   final int signalLevel;
   final int channelBandwidth;
+  final AdvancedInfo? advancedInfo;
 
   WifiScanResultDTO(
       {required this.ssid,
       required this.bssid,
       required this.channel,
       required this.signalLevel,
-      required this.channelBandwidth});
+      required this.channelBandwidth,
+      required this.advancedInfo});
 
   factory WifiScanResultDTO.fromJson(Map<String, dynamic> json) {
     return WifiScanResultDTO(
@@ -75,7 +93,71 @@ class WifiScanResultDTO {
         bssid: json['bssid'],
         channel: int.parse(json['channel'].toString()),
         signalLevel: int.parse(json['signalLevel'].toString()),
-        channelBandwidth: int.parse(json['channelBandwidth'].toString()));
+        channelBandwidth: int.parse(json['channelBandwidth'].toString()),
+        advancedInfo: json['advancedInfo'] != null
+            ? AdvancedInfo.fromJson(json['advancedInfo'])
+            : null);
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "ssid": ssid,
+      "bssid": bssid,
+      "channel": channel,
+      "signalLevel": signalLevel,
+      "channelBandwidth": channelBandwidth,
+      "advancedInfo": advancedInfo
+    };
+  }
+}
+
+class AdvancedInfo {
+  final String standard;
+  final String capabilities;
+  final int bss;
+  final int ft;
+  final int rm;
+  final int ftm;
+  final int mlo;
+  final String mld;
+  final int pmf;
+
+  AdvancedInfo(
+      {required this.standard,
+      required this.capabilities,
+      required this.bss,
+      required this.ft,
+      required this.rm,
+      required this.ftm,
+      required this.pmf,
+      required this.mlo,
+      required this.mld});
+
+  factory AdvancedInfo.fromJson(Map<String, dynamic> json) {
+    return AdvancedInfo(
+        mld: json['mld'],
+        standard: json['standard'],
+        capabilities: json['capabilities'],
+        ft: int.parse(json['ft'].toString()),
+        rm: int.parse(json['rm'].toString()),
+        bss: int.parse(json['bss'].toString()),
+        ftm: int.parse(json['ftm'].toString()),
+        pmf: int.parse(json['pmf'].toString()),
+        mlo: int.parse(json['mlo'].toString()));
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "standard": standard,
+      "capabilities": capabilities,
+      "bss": bss,
+      "ft": ft,
+      "rm": rm,
+      "pmf": pmf,
+      "ftm": ftm,
+      "mlo": mlo,
+      "mld": mld
+    };
   }
 }
 

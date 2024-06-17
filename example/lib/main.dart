@@ -30,7 +30,7 @@ class _MyAppState extends State<MyApp> {
   var editEnable = false;
   var executeEnable = false;
 
-  var height = [4,8,4,4,8,8,4];
+  var height = [4, 8, 4, 4, 8, 8, 4];
 
   // Realtime - update
   Timer? _timer;
@@ -113,7 +113,7 @@ class _MyAppState extends State<MyApp> {
       "DnsLookup": dnsLookupState,
       "TraceRoute": traceRouteState,
       "PortScan": portScanState,
-      "WifiInfo": wifiInfoState,
+      "WifiInfo": wifiInfoState
     };
 
     stateFunctions[act]?.call();
@@ -424,7 +424,7 @@ class _MyAppState extends State<MyApp> {
     if (scanResult.isNotEmpty) {
       _result = "";
       for (var element in scanResult) {
-        resultHandle("$_result\n${element}");
+        resultHandle("$_result\n${element.advancedInfo?.toJson().toString()}");
       }
     } else {
       _result = _result;
