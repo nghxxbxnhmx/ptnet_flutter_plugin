@@ -1,14 +1,7 @@
 package com.example.ptnet_plugin
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
-import android.net.wifi.ScanResult
-import android.net.wifi.WifiManager
-import android.os.Build
-import android.util.Log
-import androidx.annotation.RequiresApi
-import com.google.gson.Gson
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
@@ -99,5 +92,4 @@ class PtnetPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     override fun onDetachedFromActivity() {
         activity = null;
     }
-
 }
