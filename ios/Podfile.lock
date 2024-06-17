@@ -1,0 +1,23 @@
+PODS:
+  - Flutter (3.13.0)
+  - ptnet_plugin (0.0.1):
+    - Flutter
+
+DEPENDENCIES:
+  - ptnet_plugin (from `ptnet_plugin.podspec`)
+
+SPEC REPOS:
+  trunk:
+    - Flutter
+
+EXTERNAL SOURCES:
+  ptnet_plugin:
+    :path: ptnet_plugin.podspec
+
+SPEC CHECKSUMS:
+  Flutter: 8ff16720b007bae16abfe75ef9fe3ee45ead486a
+  ptnet_plugin: 52332e59e2d926b2f5b33115ab5138b49aba224b
+
+PODFILE CHECKSUM: c303245b9953d115aff6e5659d194fa6eca11e5e
+
+COCOAPODS: 1.15.2

@@ -14,6 +14,11 @@ class PingDTO {
           .substring(0, json['time'].toString().indexOf('.') + 3)),
     );
   }
+
+  @override
+  String toString() {
+    return 'PingDTO(address: $address, ip: $ip, time: $time)';
+  }
 }
 
 class PortDTO {

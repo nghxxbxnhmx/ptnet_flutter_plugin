@@ -1,0 +1,6 @@
+framework module PTNetFramework {
+  umbrella header "PTNetFramework.h"
+  export *
+
+  module * { export * }
+}

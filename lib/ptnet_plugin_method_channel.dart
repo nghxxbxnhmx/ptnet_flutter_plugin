@@ -1,6 +1,8 @@
 import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+
 import 'data.dart';
 import 'ptnet_plugin_platform_interface.dart';
 
@@ -25,6 +27,7 @@ class MethodChannelPtnetPlugin extends PtnetPluginPlatform {
         return null;
       }
     } catch (e) {
+      print('Error in getPingResult: $e');
       return null;
     }
   }
@@ -42,6 +45,7 @@ class MethodChannelPtnetPlugin extends PtnetPluginPlatform {
         return null;
       }
     } catch (e) {
+      print('Error in getPageLoadResult: $e');
       return null;
     }
   }
@@ -65,6 +69,7 @@ class MethodChannelPtnetPlugin extends PtnetPluginPlatform {
         return null;
       }
     } catch (e) {
+      print('Error in getDnsLookupResult: $e');
       return null;
     }
   }
@@ -89,6 +94,7 @@ class MethodChannelPtnetPlugin extends PtnetPluginPlatform {
         return null;
       }
     } catch (e) {
+      print('Error in getPortScanResult: $e');
       return null;
     }
   }
@@ -108,6 +114,7 @@ class MethodChannelPtnetPlugin extends PtnetPluginPlatform {
         return null;
       }
     } catch (e) {
+      print('Error in getTraceRouteEndpoint: $e');
       return null;
     }
   }
@@ -127,6 +134,7 @@ class MethodChannelPtnetPlugin extends PtnetPluginPlatform {
         return null;
       }
     } catch (e) {
+      print('Error in getTraceRouteResult: $e');
       return null;
     }
   }
@@ -149,6 +157,7 @@ class MethodChannelPtnetPlugin extends PtnetPluginPlatform {
         return null;
       }
     } catch (e) {
+      print('Error in getWifiScanResult: $e');
       return null;
     }
   }
@@ -168,7 +177,19 @@ class MethodChannelPtnetPlugin extends PtnetPluginPlatform {
         return null;
       }
     } catch (e) {
+      print('Error in getWifiInfo: $e');
       return null;
+    }
+  }
+
+  Future<String> invokeMyFrameworkFunction(String param) async {
+    try {
+      final String result =
+          await methodChannel.invokeMethod('getPingResultiOS', param);
+      return result;
+    } catch (e) {
+      print('Error in invokeMyFrameworkFunction: $e');
+      return 'Error occurred';
     }
   }
 }
