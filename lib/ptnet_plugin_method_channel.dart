@@ -171,4 +171,21 @@ class MethodChannelPtnetPlugin extends PtnetPluginPlatform {
       return null;
     }
   }
+
+  @override
+  Future<String?> getMoreInfo() async {
+    try {
+      var dataToPass = <String, dynamic>{};
+      final jsonResult =
+          await methodChannel.invokeMethod<String>('getMoreInfo', dataToPass);
+
+      if (jsonResult != null) {
+        return jsonResult;
+      } else {
+        return null;
+      }
+    } catch (e) {
+      return null;
+    }
+  }
 }
