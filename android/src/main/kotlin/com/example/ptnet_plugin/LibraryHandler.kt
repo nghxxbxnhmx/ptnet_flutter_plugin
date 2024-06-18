@@ -1,9 +1,19 @@
 package com.example.ptnet_plugin
 
-import com.ftel.ptnetlibrary.services.*
+
+import android.annotation.SuppressLint
+import android.content.Context
+import android.net.wifi.ScanResult
+import android.net.wifi.WifiManager
+import android.os.Build
+import android.util.Log
+import androidx.core.content.getSystemService
 import com.ftel.ptnetlibrary.dto.*
+import com.ftel.ptnetlibrary.services.*
 import com.google.gson.Gson
+import org.xbill.DNS.WKSRecord
 import java.util.concurrent.*
+
 
 class LibrariesHandler {
     fun pingResult(address: String): String {
