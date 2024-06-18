@@ -1,0 +1,87 @@
+// swift-interface-format-version: 1.0
+// swift-compiler-version: Apple Swift version 5.10 (swiftlang-5.10.0.13 clang-1500.3.9.4)
+// swift-module-flags: -target arm64-apple-ios17.4 -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -Onone -enable-bare-slash-regex -module-name PTNetFramework
+import SystemConfiguration.CaptiveNetwork
+import Foundation
+import NetDiagnosis
+import Network
+@_exported import PTNetFramework
+import Swift
+import SystemConfiguration
+import _Concurrency
+import _StringProcessing
+import _SwiftConcurrencyShims
+public struct PageLoadDTO : Swift.Codable {
+  public var data: Swift.String
+  public var status: Swift.String
+  public var statusCode: Swift.Int
+  public var responseTime: Swift.Double
+  public var message: Swift.String
+  public init(data: Swift.String, status: Swift.String, statusCode: Swift.Int, responseTime: Swift.Double, message: Swift.String)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public class IpConfigService {
+  public init()
+  public func getIPAddress() -> Swift.String
+  public func getSubnetMask() -> Swift.String
+  public func getDefaultGateway() -> Swift.String
+  public func getWiFiSSID() -> Swift.String
+  public func getWiFiBSSID() -> Swift.String
+  public func getExternalIpAddress() -> Swift.String
+  @objc deinit
+}
+public protocol DnsLookUpServiceProtocol {
+  func execute(domain: Swift.String, completion: @escaping ([Swift.String]) -> Swift.Void)
+}
+public class DnsLookUpService : PTNetFramework.DnsLookUpServiceProtocol {
+  public init()
+  public func execute(domain: Swift.String, completion: @escaping ([Swift.String]) -> Swift.Void)
+  @objc deinit
+}
+public protocol TracerouteServiceProtocol {
+  func execute(address: Swift.String, traceHopCallBack: @escaping (PTNetFramework.TraceHopDTO) -> Swift.Void)
+}
+@_hasMissingDesignatedInitializers public class TracerouteService : PTNetFramework.TracerouteServiceProtocol {
+  public func execute(address: Swift.String, traceHopCallBack: @escaping (PTNetFramework.TraceHopDTO) -> Swift.Void)
+  @objc deinit
+}
+public struct TraceHopDTO : Swift.Codable {
+  public var hopNumber: Swift.Int
+  public var domain: Swift.String
+  public var ipAddress: Swift.String
+  public var time: Swift.Double
+  public var status: Swift.Bool
+  public init(hopNumber: Swift.Int, domain: Swift.String, ipAddress: Swift.String, time: Swift.Double, status: Swift.Bool)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public protocol PortScanServiceProtocol {
+  func execute(address: Swift.String, port: Swift.Int, timeOut: Foundation.TimeInterval) -> Swift.String
+}
+public class PortScanService : PTNetFramework.PortScanServiceProtocol {
+  public init()
+  public func execute(address: Swift.String, port: Swift.Int, timeOut: Foundation.TimeInterval) -> Swift.String
+  @objc deinit
+}
+public struct PingDTO : Swift.Codable {
+  public var address: Swift.String
+  public var ip: Swift.String
+  public var time: Swift.Double
+  public init(address: Swift.String, ip: Swift.String, time: Swift.Double)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public class PageLoadService {
+  public init()
+  public func pageLoadTimer(address: Swift.String) -> PTNetFramework.PageLoadDTO
+  @objc deinit
+}
+public protocol PingServiceProtocol {
+  func execute(address: Swift.String, completion: @escaping (PTNetFramework.PingDTO) -> Swift.Void)
+}
+public class PingService : PTNetFramework.PingServiceProtocol {
+  public init(dnsLookUpService: any PTNetFramework.DnsLookUpServiceProtocol = DnsLookUpService())
+  public func execute(address: Swift.String, completion: @escaping (PTNetFramework.PingDTO) -> Swift.Void)
+  @objc deinit
+}
