@@ -14,6 +14,11 @@ class PingDTO {
           .substring(0, json['time'].toString().indexOf('.') + 3)),
     );
   }
+
+  @override
+  String toString() {
+    return 'PingDTO{address: $address, ip: $ip, time: $time}';
+  }
 }
 
 class PortDTO {
@@ -28,6 +33,11 @@ class PortDTO {
         address: json['address'],
         port: json['port'],
         open: bool.parse(json['open'].toString()));
+  }
+
+  @override
+  String toString() {
+    return 'PortDTO{address: $address, port: $port, open: $open}';
   }
 }
 
@@ -53,6 +63,11 @@ class TraceHopDTO {
         time: double.parse(json['time'].toString()),
         status: bool.parse(json['status'].toString()));
   }
+
+  @override
+  String toString() {
+    return 'TraceHopDTO{hopNumber: $hopNumber, domain: $domain, ipAddress: $ipAddress, time: $time, status: $status}';
+  }
 }
 
 class WifiScanResultDTO {
@@ -77,35 +92,73 @@ class WifiScanResultDTO {
         signalLevel: int.parse(json['signalLevel'].toString()),
         channelBandwidth: int.parse(json['channelBandwidth'].toString()));
   }
-}
 
-class WifiInfoDTO {
-  final String SSID;
-  final String BSSID;
-  final String gateWay;
-  final String subnetMask;
-  final String deviceMAC;
-  final String ipAddress;
-
-  WifiInfoDTO(
-      {required this.SSID,
-      required this.BSSID,
-      required this.gateWay,
-      required this.subnetMask,
-      required this.deviceMAC,
-      required this.ipAddress});
-
-  factory WifiInfoDTO.fromJson(Map<String, dynamic> json) {
-    return WifiInfoDTO(
-        SSID: json['SSID'],
-        BSSID: json['BSSID'],
-        gateWay: json['gateWay'],
-        subnetMask: json['subnetMask'],
-        deviceMAC: json['deviceMAC'],
-        ipAddress: json['ipAddress']);
+  @override
+  String toString() {
+    return 'WifiScanResultDTO{ssid: $ssid, bssid: $bssid, channel: $channel, signalLevel: $signalLevel, channelBandwidth: $channelBandwidth}';
   }
 }
 
-// Useless - bỏ (1,2 biến trả về -> không cân thiết)
-// class PageLoadResult {}
-// class DnsResult {}
+class WifiInfoDTO {
+  final String ssid;
+  final String bssid;
+  final String gateway;
+  final String subnetMask;
+  final String deviceMAC;
+  final String ipAddress;
+  final String externalIpAddress;
+
+  WifiInfoDTO(
+      {required this.ssid,
+      required this.bssid,
+      required this.gateway,
+      required this.subnetMask,
+      required this.deviceMAC,
+      required this.ipAddress,
+      required this.externalIpAddress});
+
+  factory WifiInfoDTO.fromJson(Map<String, dynamic> json) {
+    return WifiInfoDTO(
+        ssid: json['ssid'],
+        bssid: json['bssid'],
+        gateway: json['gateway'],
+        subnetMask: json['subnetMask'],
+        deviceMAC: json['deviceMAC'],
+        ipAddress: json['ipAddress'],
+        externalIpAddress: json['externalIpAddress']);
+  }
+
+  @override
+  String toString() {
+    return 'WifiInfoDTO{ssid: $ssid, bssid: $bssid, gateway: $gateway, subnetMask: $subnetMask, deviceMAC: $deviceMAC, ipAddress: $ipAddress, externalIPAddress: $externalIpAddress}';
+  }
+}
+
+class PageLoadDTO {
+  final String data;
+  final String status;
+  final int statusCode;
+  final double responseTime;
+  final String message;
+
+  PageLoadDTO(
+      {required this.data,
+      required this.status,
+      required this.statusCode,
+      required this.responseTime,
+      required this.message});
+
+  factory PageLoadDTO.fromJson(Map<String, dynamic> json) {
+    return PageLoadDTO(
+        data: json['data'],
+        status: json['status'],
+        statusCode: int.parse(json['statusCode'].toString()),
+        responseTime: double.parse(json['responseTime'].toString()),
+        message: json['message']);
+  }
+
+  @override
+  String toString() {
+    return 'PageLoadDTO{data: $data, status: $status, statusCode: $statusCode, responseTime: $responseTime, message: $message}';
+  }
+}

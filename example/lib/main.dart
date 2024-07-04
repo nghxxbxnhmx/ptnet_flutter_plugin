@@ -1,6 +1,6 @@
 import 'dart:async';
-import 'package:flutter/material.dart';
 
+import 'package:flutter/material.dart';
 import 'package:ptnet_plugin/data.dart';
 import 'package:ptnet_plugin/permission.dart';
 import 'package:ptnet_plugin/ptnet_plugin.dart';
@@ -20,7 +20,6 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   String _result = '';
   final _plugin = PtnetPlugin();
-
   // Controller - UI
   final inputServer = TextEditingController();
   final inputAddress = TextEditingController();
@@ -30,7 +29,7 @@ class _MyAppState extends State<MyApp> {
   var editEnable = false;
   var executeEnable = false;
 
-  var height = [4,8,4,4,8,8,4];
+  var height = [4, 8, 4, 4, 8, 8, 4];
 
   // Realtime - update
   Timer? _timer;
@@ -163,7 +162,7 @@ class _MyAppState extends State<MyApp> {
   Future<void> pingState() async {
     String error = "";
     String address = getInputAddress();
-    PingDTO pingResult = PingDTO(address: "", ip: "", time: -1.0);
+    PingDTO pingResult = PingDTO(address: "", ip: "", time: 0.0);
     // Start process  -------------------------------------------
     resultHandle("");
     executeHandle(false);
@@ -172,6 +171,7 @@ class _MyAppState extends State<MyApp> {
     // Execute
     try {
       pingResult = await _plugin.getPingResult(address) ?? pingResult;
+      // print(_plugin.getPlatformVersion());
     } on Exception catch (e) {
       error = e.toString();
     }
@@ -201,11 +201,9 @@ class _MyAppState extends State<MyApp> {
       if (executeEnable) {
         break;
       } else {
-        try {
-          pageLoadResult = await _plugin.getPageLoadResult(address) ?? "";
-        } on Exception catch (e) {
-          pageLoadResult = "Fail to get page load result";
-        }
+        var pageLoadDTO = await _plugin.getPageLoadResult(address);
+        pageLoadResult =
+            pageLoadDTO != null ? pageLoadDTO.responseTime.toString() : "-1";
 
         resultHandle("$_result\nTime: $pageLoadResult ms");
         time--;
@@ -434,12 +432,13 @@ class _MyAppState extends State<MyApp> {
   Future<void> wifiInfoState() async {
     String error = "";
     WifiInfoDTO wifiInfo = WifiInfoDTO(
-        SSID: "",
-        BSSID: "",
-        gateWay: "",
+        ssid: "",
+        bssid: "",
+        gateway: "",
         subnetMask: "",
         deviceMAC: "",
-        ipAddress: "");
+        ipAddress: "",
+        externalIpAddress: "");
     // Start process  -------------------------------------------
     resultHandle("");
     executeHandle(false);
