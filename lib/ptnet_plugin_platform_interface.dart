@@ -1,4 +1,5 @@
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
+
 import 'data.dart';
 import 'ptnet_plugin_method_channel.dart';
 
@@ -23,11 +24,15 @@ abstract class PtnetPluginPlatform extends PlatformInterface {
     _instance = instance;
   }
 
+  Future<String?> getPlatformVersion() {
+    throw UnimplementedError('getPlatformVersion() has not been implemented.');
+  }
+
   Future<PingDTO?> getPingResult(String address) {
     throw UnimplementedError('pingResult() has not been implemented.');
   }
 
-  Future<String?> getPageLoadResult(String address) {
+  Future<PageLoadDTO?> getPageLoadResult(String address) {
     throw UnimplementedError('pageLoadResult() has not been implemented.');
   }
 
@@ -46,7 +51,6 @@ abstract class PtnetPluginPlatform extends PlatformInterface {
   Future<TraceHopDTO?> getTraceRouteResult(String address, int ttl) {
     throw UnimplementedError('traceRouteResult() has not been implemented.');
   }
-
 
   Future<List<WifiScanResultDTO>?> getWifiScanResult() {
     throw UnimplementedError('wifiScanResult() has not been implemented.');

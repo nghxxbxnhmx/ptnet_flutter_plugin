@@ -27,7 +27,7 @@ SPEC CHECKSUMS:
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   integration_test: ce0a3ffa1de96d1a89ca0ac26fca7ea18a749ef4
   permission_handler_apple: e76247795d700c14ea09e3a2d8855d41ee80a2e6
-  ptnet_plugin: 52332e59e2d926b2f5b33115ab5138b49aba224b
+  ptnet_plugin: 685fa1d5c89b037e80aa377d1081203b0fd16e3a
 
 PODFILE CHECKSUM: 819463e6a0290f5a72f145ba7cde16e8b6ef0796
 

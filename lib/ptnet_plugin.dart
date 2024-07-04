@@ -2,6 +2,10 @@ import 'data.dart';
 import 'ptnet_plugin_platform_interface.dart';
 
 class PtnetPlugin {
+  Future<String?> getPlatformVersion() {
+    return PtnetPluginPlatform.instance.getPlatformVersion();
+  }
+
   Future<PingDTO?> getPingResult(String address) {
     return PtnetPluginPlatform.instance
         .getPingResult(address)
@@ -17,7 +21,7 @@ class PtnetPlugin {
     });
   }
 
-  Future<String?> getPageLoadResult(String address) {
+  Future<PageLoadDTO?> getPageLoadResult(String address) {
     return PtnetPluginPlatform.instance.getPageLoadResult(address);
   }
 
