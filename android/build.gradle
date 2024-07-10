@@ -67,7 +67,7 @@ android {
 
 
         // AAR Lib
-        implementation files("libs/shared-release-v0.0.1.aar")
+        implementation files("libs/shared-release.aar")
     }
 
     testOptions {

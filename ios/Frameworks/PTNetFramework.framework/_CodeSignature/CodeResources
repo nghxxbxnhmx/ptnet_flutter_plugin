@@ -10,55 +10,31 @@
 		</data>
 		<key>Info.plist</key>
 		<data>
-		F4pttimF5UqztC2JJZfaxyD8Xr0=
+		NCN47SZrzQysQqejHmeg27zP2pA=
 		</data>
-		<key>Modules/PTNetFramework.swiftmodule/Project/arm64-apple-ios-simulator.swiftsourceinfo</key>
+		<key>Modules/PTNetFramework.swiftmodule/Project/arm64-apple-ios.swiftsourceinfo</key>
 		<data>
-		Ooxrc8MoiHek3xYhC7KwIDOSuic=
+		VoSUaEN4/YXzyWH+PAu/fyJDvnk=
 		</data>
-		<key>Modules/PTNetFramework.swiftmodule/Project/x86_64-apple-ios-simulator.swiftsourceinfo</key>
-		<data>
-		PeLH3XzZeEcPAVC/iF3wyE9myng=
-		</data>
-		<key>Modules/PTNetFramework.swiftmodule/arm64-apple-ios-simulator.abi.json</key>
+		<key>Modules/PTNetFramework.swiftmodule/arm64-apple-ios.abi.json</key>
 		<data>
 		lX0ly6vsNfMcC5P6HmgcoW0FTB0=
 		</data>
-		<key>Modules/PTNetFramework.swiftmodule/arm64-apple-ios-simulator.private.swiftinterface</key>
+		<key>Modules/PTNetFramework.swiftmodule/arm64-apple-ios.private.swiftinterface</key>
 		<data>
-		vkaReu3nh0s9BhCjRFj/pA9Qk2M=
+		QYPtZClpRqCXYpP3evC01qPDrzI=
 		</data>
-		<key>Modules/PTNetFramework.swiftmodule/arm64-apple-ios-simulator.swiftdoc</key>
+		<key>Modules/PTNetFramework.swiftmodule/arm64-apple-ios.swiftdoc</key>
 		<data>
-		gEC+ORjYvWVMJMcwLNpRkNenmcw=
+		mJoZVzLus4A7JzLSnZHlzZLJBPU=
 		</data>
-		<key>Modules/PTNetFramework.swiftmodule/arm64-apple-ios-simulator.swiftinterface</key>
+		<key>Modules/PTNetFramework.swiftmodule/arm64-apple-ios.swiftinterface</key>
 		<data>
-		vkaReu3nh0s9BhCjRFj/pA9Qk2M=
+		QYPtZClpRqCXYpP3evC01qPDrzI=
 		</data>
-		<key>Modules/PTNetFramework.swiftmodule/arm64-apple-ios-simulator.swiftmodule</key>
+		<key>Modules/PTNetFramework.swiftmodule/arm64-apple-ios.swiftmodule</key>
 		<data>
-		hk0mYM88oDx9HylIdpJrvnuI0iw=
-		</data>
-		<key>Modules/PTNetFramework.swiftmodule/x86_64-apple-ios-simulator.abi.json</key>
-		<data>
-		lX0ly6vsNfMcC5P6HmgcoW0FTB0=
-		</data>
-		<key>Modules/PTNetFramework.swiftmodule/x86_64-apple-ios-simulator.private.swiftinterface</key>
-		<data>
-		MHFWnQgwkwOi3iCfVbcK1o3SGx8=
-		</data>
-		<key>Modules/PTNetFramework.swiftmodule/x86_64-apple-ios-simulator.swiftdoc</key>
-		<data>
-		eiKlbNN64gPVA80NeBFbvLi90Rs=
-		</data>
-		<key>Modules/PTNetFramework.swiftmodule/x86_64-apple-ios-simulator.swiftinterface</key>
-		<data>
-		MHFWnQgwkwOi3iCfVbcK1o3SGx8=
-		</data>
-		<key>Modules/PTNetFramework.swiftmodule/x86_64-apple-ios-simulator.swiftmodule</key>
-		<data>
-		Iwm9Q3Pan+Ue7TglLarHpYIZcOo=
+		zxc0Lc3XC7FhTpHzDzalnGJOILA=
 		</data>
 		<key>Modules/module.modulemap</key>
 		<data>
@@ -74,88 +50,46 @@
 			gJ+xsXf00gDuLuqf6h5igcFKHXV0J5gDVSd64vsEFhI=
 			</data>
 		</dict>
-		<key>Modules/PTNetFramework.swiftmodule/Project/arm64-apple-ios-simulator.swiftsourceinfo</key>
+		<key>Modules/PTNetFramework.swiftmodule/Project/arm64-apple-ios.swiftsourceinfo</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			9ek0NoUXouFfv9ylN2x243shZVE1VcNbMe05X8XF23A=
+			dUlE4K8vYqjFCkxzUTa8jIEk9KL8i6xDN1JQ950cKRc=
 			</data>
 		</dict>
-		<key>Modules/PTNetFramework.swiftmodule/Project/x86_64-apple-ios-simulator.swiftsourceinfo</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			WFZQu+thQbcTZH51QExxTA2VaXaXLw01ZtYYSKL046s=
-			</data>
-		</dict>
-		<key>Modules/PTNetFramework.swiftmodule/arm64-apple-ios-simulator.abi.json</key>
+		<key>Modules/PTNetFramework.swiftmodule/arm64-apple-ios.abi.json</key>
 		<dict>
 			<key>hash2</key>
 			<data>
 			TXtotTCNxM45s1Lc073hu5SYfy83160wiEh8jW02nho=
 			</data>
 		</dict>
-		<key>Modules/PTNetFramework.swiftmodule/arm64-apple-ios-simulator.private.swiftinterface</key>
+		<key>Modules/PTNetFramework.swiftmodule/arm64-apple-ios.private.swiftinterface</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			74oNiezWJwuSFn9qj3nXisg21/6KxrQ6l9o4fRGqxeY=
+			72XhbrFl47kn73wdor9eOKdu7cLLVEl2kJda5GiVo3c=
 			</data>
 		</dict>
-		<key>Modules/PTNetFramework.swiftmodule/arm64-apple-ios-simulator.swiftdoc</key>
+		<key>Modules/PTNetFramework.swiftmodule/arm64-apple-ios.swiftdoc</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			tfXyuL/wrWO46DGPSu+9Ld8Cd7RyqObmZTD+kLijbxU=
+			rK4XKapWjIa3+QcUsa4XHyO8UHCR6kkzynOzlFqBOkw=
 			</data>
 		</dict>
-		<key>Modules/PTNetFramework.swiftmodule/arm64-apple-ios-simulator.swiftinterface</key>
+		<key>Modules/PTNetFramework.swiftmodule/arm64-apple-ios.swiftinterface</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			74oNiezWJwuSFn9qj3nXisg21/6KxrQ6l9o4fRGqxeY=
+			72XhbrFl47kn73wdor9eOKdu7cLLVEl2kJda5GiVo3c=
 			</data>
 		</dict>
-		<key>Modules/PTNetFramework.swiftmodule/arm64-apple-ios-simulator.swiftmodule</key>
+		<key>Modules/PTNetFramework.swiftmodule/arm64-apple-ios.swiftmodule</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			dlpc3MVgBetTzC50pa94rNKOMWX4Ri7V5fIij4D6YEw=
-			</data>
-		</dict>
-		<key>Modules/PTNetFramework.swiftmodule/x86_64-apple-ios-simulator.abi.json</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			TXtotTCNxM45s1Lc073hu5SYfy83160wiEh8jW02nho=
-			</data>
-		</dict>
-		<key>Modules/PTNetFramework.swiftmodule/x86_64-apple-ios-simulator.private.swiftinterface</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			uDDShIo2IFnST0sXsN6LCo/DctzV+9ez8Z/RwbSgLsY=
-			</data>
-		</dict>
-		<key>Modules/PTNetFramework.swiftmodule/x86_64-apple-ios-simulator.swiftdoc</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			b+dcK+AsKsgE5WPYa2jtLJ2A/5WW39xrw1Q0wThqybs=
-			</data>
-		</dict>
-		<key>Modules/PTNetFramework.swiftmodule/x86_64-apple-ios-simulator.swiftinterface</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			uDDShIo2IFnST0sXsN6LCo/DctzV+9ez8Z/RwbSgLsY=
-			</data>
-		</dict>
-		<key>Modules/PTNetFramework.swiftmodule/x86_64-apple-ios-simulator.swiftmodule</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			g9Qdbx/R74wjrn2i1Cze+Erg68W/ZhrZ7+sFhBCBjTw=
+			scnrPnrv8bWwm3/5U1jK7sHhSKVs7UjjVpY2dwIu7ys=
 			</data>
 		</dict>
 		<key>Modules/module.modulemap</key>
